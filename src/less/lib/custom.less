@@ -1,0 +1,518 @@
+/**自定义样式*/
+
+body {
+    background: #272727;
+}
+
+body.iframeBody {
+    background: #fff;
+}
+
+[ng\:cloak],
+[ng-cloak],
+[data-ng-cloak],
+[x-ng-cloak],
+.ng-cloak,
+.x-ng-cloak,
+.ng-hide {
+    display: none !important;
+}
+
+ng\:form {
+    display: block;
+}
+
+.ng-animate-start {
+    clip: rect(0, auto, auto, 0);
+    -ms-zoom: 1.0001;
+}
+
+.ng-animate-active {
+    clip: rect(-1px, auto, auto, 0);
+    -ms-zoom: 1;
+}
+
+.main_box {
+    height: 100%;
+    box-sizing: border-box;
+    width: 100%;
+    padding-left: 0;
+}
+
+.button_group {
+    box-sizing: border-box;
+    width: 100%;
+    background: #fafafa;
+    height: 40px;
+    padding: 8px 0;
+    .button:first-child {
+        margin-left: 8px;
+    }
+}
+
+.table_detail {
+    width: 100%;
+    box-sizing: border-box;
+    height: 0;
+    opacity: 0;
+    transition: all .3s linear;
+    background: #f1f1f1;
+    &.showActive {
+        opacity: 1;
+    }
+    .top_shadow {
+        height: 10px;
+        width: 100%;
+    }
+}
+
+
+/***搜索顶部样式 ****/
+
+.top_search {
+    height: 45px;
+    box-sizing: border-box;
+    background: #ccc;
+    padding-bottom: 1px;
+    &.noPadding {
+        height: 44px;
+        padding: 0;
+    }
+}
+
+.showed_search {
+    height: 44px;
+    box-sizing: border-box;
+    position: relative;
+    background: #dedede;
+    overflow: hidden
+}
+
+.showed_search .box {
+    padding: 10px;
+    line-height: 24px;
+}
+
+.showed_search .box .label {
+    float: left;
+    line-height: 24px;
+}
+
+.showed_search .box .item {
+    float: left;
+    margin-right: 10px;
+    cursor: pointer;
+    display: inline-block;
+    transition: all .3s ease-out;
+    padding: 0 10px;
+    height: 24px;
+    line-height: 22px;
+    background: #666;
+    color: #fff;
+    font-size: 12px;
+    border-radius: 3px;
+}
+
+.showed_search .box .item:hover {
+    background: #333;
+}
+
+.showed_search .box .item .remove_label {
+    display: inline-block;
+    margin-left: 5px;
+    font-size: 16px;
+    color: #fff;
+    cursor: pointer;
+}
+
+.showed_search .common_label {
+    height: 44px;
+    width: 100%;
+    box-sizing: border-box;
+    padding-left: 172px;
+}
+
+.showed_search .box-left {
+    border-right: 1px solid #ccc;
+    background: #f5f5f5;
+    box-sizing: border-box;
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: 100;
+    .ui.mini.button.search-btn {
+        float: left;
+        height: 24px;
+        padding: 0 15px;
+    }
+}
+
+.common_label {
+    .item {
+        float: left;
+        margin-right: 10px;
+        cursor: pointer;
+        display: inline-block;
+        transition: all .3s ease-out;
+        padding: 0 10px;
+        height: 24px;
+        line-height: 22px;
+        background: #666;
+        color: #fff;
+        font-size: 12px;
+        border-radius: 3px;
+        .remove_label {
+            display: inline-block;
+            margin-left: 5px;
+            font-size: 16px;
+            color: #fff;
+            cursor: pointer;
+        }
+        &:hover {
+            background: #333;
+        }
+    }
+}
+
+.ui-grid-menu-button {
+    height: 28px;
+}
+
+.showBox {
+    display: none;
+    position: absolute;
+    top: 50px;
+    right: 0;
+    width: 400px;
+    background: #fff;
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 3px;
+    box-shadow: 0 2px 3px #666;
+    z-index: 10;
+}
+
+.showBox ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    text-align: left;
+}
+
+.showBox ul li {
+    height: 40px;
+    line-height: 40px;
+    box-sizing: border-box;
+    padding: 0 15px;
+    border-top: 1px solid #dedede;
+    color: #666;
+    transition: all .3s linear;
+}
+
+.showBox ul li:hover {
+    background: #f5f5f5;
+}
+
+#topModal.top_modal {
+    overflow-y: visible!important;
+}
+
+.search_form {
+    margin: 0 auto 20px;
+    .ui.dropdown {
+        height: auto;
+    }
+}
+
+.main_grid {
+    width: 100%;
+}
+
+.grid_apply_detail {
+    width: 100%;
+    height: 150px;
+}
+
+.insert_wrap {
+    height: auto;
+    width: 100%;
+    box-sizing: border-box;
+    display: block;
+    flex: 1;
+    justify-content: space-between;
+    .abBox {
+        width: 380px;
+        text-align: center;
+        min-height: 100%;
+        box-sizing: border-box;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        padding: 20px 0;
+        border-right: 1px solid #dedede;
+    }
+    .content {
+        width: 100%;
+        height: 100%;
+        display: flex;
+    }
+}
+
+.custom_sidebar {
+    width: 100%;
+    .header {
+        line-height: 50px;
+        font-family: "Microsoft Yahei";
+        .icon {
+            vertical-align: sub;
+            margin-left: 10px;
+        }
+    }
+    .insert_slider {
+        width: 100%;
+        padding: 5px 25px;
+        box-sizing: border-box;
+        .slider_io {
+            padding: 0 0 15px 0;
+        }
+        .form_item {
+            padding-right: 15px;
+            box-sizing: border-box;
+            .area_check {
+                select {
+                    margin-right: 15px;
+                    &:last-child {
+                        margin-right: 0;
+                    }
+                }
+            }
+        }
+    }
+    .insert_slider_buttons {
+        padding: 10px 0;
+        box-sizing: border-box;
+        width: 100%;
+        clear: left;
+    }
+}
+
+.customMini.ui.mini.button {
+    margin-left: 5px;
+    margin-top: 3px;
+    font-size: 12px;
+    padding: 0 10px;
+    border-radius: 2px;
+    height: 24px;
+    font-weight: normal;
+}
+
+.search_form .ui.search.dropdown {
+    min-width: 100%;
+}
+
+.other_html {
+    width: 100%;
+    border: 1px solid #ddd;
+    display: flex;
+    justify-content: space-between;
+    box-sizing: border-box;
+    background: #fff;
+    box-shadow: 0 0 6px #ccc;
+    &.hide {
+        display: none;
+    }
+    &.show {
+        display: flex;
+    }
+    .fields {
+        padding: 30px 30px 30px 30px;
+        .inline.fields {
+            padding: 0;
+        }
+    }
+    .save_items {
+        padding: 0;
+        width: auto;
+        display: flex;
+        flex: 1;
+        background: #fff;
+        box-sizing: border-box;
+        border-left: 1px solid #dedede;
+        .added_item_box {
+            max-width: 400px;
+            min-width: 300px;
+            background: #f9f9f9;
+            height: 100%;
+            padding: 0;
+            box-sizing: border-box;
+            border-right: 1px solid #ddd;
+            .added_item {
+                width: 100%;
+                border-bottom: 1px solid #dedede;
+                color: #666;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 10px 10px;
+                box-sizing: border-box;
+                &.light {
+                    background: #fff;
+                }
+                &.dark {
+                    background: #f5f5f5;
+                }
+            }
+        }
+        .preview_btn_wrap {
+            padding: 10px 10px 0 0;
+            display: flex;
+            justify-content: flex-end;
+        }
+    }
+}
+
+.extra_validator {
+    display: flex;
+    justify-content: flex-start;
+}
+
+.cityChecks {
+    display: flex;
+    select {
+        margin-right: 10px;
+        &:last-child {
+            margin-right: 0;
+        }
+    }
+}
+
+select.province_node:required:invalid {
+    color: #ccc;
+}
+
+select.province_node option[value=""][disabled] {
+    display: none;
+}
+
+select.province_node option {
+    color: black;
+}
+
+.insertModal .ui-grid {
+    border: none;
+}
+
+.ui-grid-pager-control input {
+    width: auto;
+}
+
+.cityChecks .ui.dropdown option[value=""][disabled] {
+    display: none;
+}
+
+.table-cell-center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+
+.cusItems {
+    padding: 10px;
+    background: #f5f5f5;
+    border: 1px solid #dedede;
+    .cusItems_title {
+        width: 100%;
+        border-bottom: 1px solid #dedede;
+        padding-bottom: 10px;
+    }
+    .repeat_one {
+        padding: 0px 10px;
+        background: #F9f9f9;
+        border: 1px solid #dedede;
+        margin-top: 8px;
+    }
+    .cus_item {
+        display: flex;
+        justify-content: start;
+        margin: 10px 0;
+        label.fixedlabel {
+            width: 100px;
+            box-sizing: border-box;
+            display: block;
+            padding-right: 8px;
+            text-align: right;
+            line-height: 37px;
+        }
+        .one {
+            flex: 1;
+            label {
+                position: relative;
+                top: 10px;
+            }
+        }
+    }
+}
+
+.template_modal .insertModal {
+    padding: 15px 0;
+}
+
+.treeview_label {
+    display: block;
+    margin: 0em 0em 0.28571429rem 0em;
+    color: rgba(0, 0, 0, 0.87);
+    font-size: 0.92857143em;
+    font-weight: bold;
+    text-transform: none;
+}
+
+.custom_sidebar {
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: flex-start;
+    align-content: stretch;
+    .custom_sidebar_inner {
+        height: auto;
+        min-height: 100%;
+        display: flex;
+        flex-flow: column nowrap;
+        justify-content: flex-start;
+        align-content: stretch;
+    }
+    .other_html_wrap {
+        width: 100%;
+    }
+}
+
+// fixed User can't select the row by clicking the select checkbox available in the respective row when enableFullRowSelection : true
+.ui-grid-cell.ui-grid-disable-selection.ui-grid-row-header-cell {
+    pointer-events: all;
+}
+
+//uigrid loading
+.table-loading {
+    position: absolute;
+    top: 100px;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    font-size: 1.4em;
+}
+
+.message_recieve_box {
+    position: absolute;
+    z-index: 1002;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    display: none;
+    .ui-pnotify {
+        position: static;
+    }
+}

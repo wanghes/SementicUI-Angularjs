@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>基于gulpjs+angularjs+semanticUI+es6+restful的后台管理系统</title>
+  <link rel="stylesheet" type="text/css" href="css/backend.css">
+</head>
+<body onselectstart="return false" id="mainBody">
+<!-- <div class="ui active inverted dimmer" id="mainLoading">
+    <div class="ui medium text loader">正在验证登录信息...</div>
+</div> -->
+<nav id="menu" class="menu" data-mcs-theme="minimal-dark"></nav>
+<nav id="menu2"></nav>
+
+<div id="main" class="panel ">
+    <div id="menu_bar">
+        <div class="menu_bar_inner">
+            <a class="slide slide_left_left js-slideout-toggle" href="javascript:;"><i class="content icon"></i></a>
+            <a class="slide slide_left" href="javascript:;"><i class="caret left icon"></i></a>
+            <a class="slide slide_right" href="javascript:;"><i class="caret right icon"></i></a>
+            <a class="slide slide_right_right" href="javascript:;" id="alarmId">
+                <i class="alarm outline icon">
+                    <span class="corner">5</span>
+                </i>
+                <div class="showBox">
+                    <ul>
+                        <li>消息信息010101信息信息信息01</li>
+                        <li>消息信息010101信息01</li>
+                        <li>消息信息0101010信息1</li>
+                        <li>消息信息01010101</li>
+                        <li>消息信息0101010信息信息1</li>
+                    </ul>
+                </div>
+            </a>
+            <a class="slide slide_right user_logout" id="userLogout" title="退出登录" href="javascript:;"><i class="power icon"></i></a>
+            <div id="tab_menu_wrap">
+                <div id="tab_menu">
+                    <ul class="tab_list">
+                        <li data-id="back_index" class="current">仪表盘</li>
+                    </ul>
+                    <div class="clearfix"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="frame_container">
+        <iframe src="./modules/dashboard.html" class="frame" data-id="back_index"></iframe>
+    </div>
+</div>
+<div id="messageRecieveBox" class="message_recieve_box" style=""></div>
+</body>
+<script type="text/javascript" src="js/lib/lib.js"></script>
+<script type="text/javascript" src="js/frameWrap.js"></script>
+<script type="text/javascript">
+    var winWidth = $(window).width();
+
+    $('#main').width(winWidth-50).addClass('togopen');
+
+    var slideout = new Slideout({
+        'panel': document.getElementById('main'),
+        'menu': document.getElementById('menu'),
+        'padding': 256,
+        'tolerance': 70
+    });
+    function toggleFunc(){
+        slideout.toggle();
+        if(slideout._opened){
+            $('#main').removeClass('togopen').width(winWidth-256);
+            $('#menu2').css('display','none');
+        }else{
+            $('#main').addClass('togopen').width(winWidth-50);
+            setTimeout(function(){
+                $('#menu2').css('display','block')
+            },300);
+        }
+    }
+    toggleFunc();
+    document.querySelector('.js-slideout-toggle').addEventListener('click', function() {
+        toggleFunc();
+    });
+
+    $(window).resize(function(){
+        var width = $(window).width();
+        if(slideout._opened){
+            $('#main').removeClass('togopen').width(width-256);
+            $('#menu2').css('display','none');
+        }else{
+            $('#main').addClass('togopen').width(width-50);
+            setTimeout(function(){
+                $('#menu2').css('display','block')
+            },300);
+        }
+    });
+
+    document.querySelector('.menu').addEventListener('click', function(eve) {
+        if (eve.target.nodeName === 'A') {
+            //slideout.close(); return false;
+        }
+    });
+
+    var tim =null
+    $('#alarmId').mouseenter(function(){
+       $('.showBox').show();
+    })
+    $('#alarmId').mouseleave(function(){
+       /* tim = setTimeout(function(){
+            $('.showBox').hide();
+        },1000);*/
+    });
+    $('.showBox').mouseenter(function(){
+        $('.showBox').show();
+        tim = null
+    });
+    $('.showBox').mouseleave(function(){
+        setTimeout(function(){
+            $('.showBox').hide();
+        },1000);
+    });
+
+    function setCookie(cname,cvalue,exdays){
+        var d = new Date();
+        d.setTime(d.getTime()+(exdays*24*60*60*1000));
+        var expires = "expires="+d.toGMTString();
+        var path_ = "path=/modules",domain_ = "domain="+location.hostname;
+        document.cookie = cname + "=" + cvalue + "; " + domain_ + "; " + expires + "; " + path_;
+    }
+
+    function delCookie(name){
+        setCookie(name,'',-1);
+    }
+
+    $('#userLogout').click(function(){
+        var href = window.location.href,BASE_URL;
+        var index = href.indexOf('?');
+        var lastHref = encodeURIComponent(href.slice(0,index));
+        if(href.indexOf('huoyunren') == -1){
+            BASE_URL = 'http://sot.chinawayltd.com:8080';
+        }else{
+            BASE_URL = 'http://zqx.huoyunren.com/sot';
+        }
+        delCookie('api_token');
+        window.location.href = BASE_URL + "/web/logout?redirect_uri=" +lastHref
+    })
+</script>
+</html>

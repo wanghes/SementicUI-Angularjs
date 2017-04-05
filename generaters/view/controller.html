@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>创建页面</title>
+    <link rel="stylesheet" type="text/css" href="css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="css/custom.css">
+    <script type="text/javascript" src="js/jquery.js"></script>
+    <script type="text/javascript" src="js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="js/pnotify.js"></script>
+</head>
+
+<body>
+    <div class="navbar navbar-inverse navbar-fixed-top">
+        <div class="navbar-inner">
+            <div class="container">
+                <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="brand" href="/">Generaters</a>
+                <div class="nav-collapse collapse">
+                    <ul class="nav">
+                        <li class="">
+                            <a href="./index.html">创建html模板</a>
+                        </li>
+                        <li class="active">
+                            <a href="./controller.html">单独创建控制器模板</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <header class="jumbotron subhead" id="overview">
+        <div class="container">
+            <h1>创建控制器模板</h1>
+            <p class="lead">将会"/src/js/pages"文件夹中生成相应的控制器javascript文件</p>
+        </div>
+    </header>
+    <div class="container" style=" padding-top: 30px;">
+        <div class="row">
+            <div class="span12">
+                <form class="form-horizontal" onsubmit="submitPage(); return false;">
+                    <div class="control-group">
+                        <label class="control-label" for="name">*文件名字：</label>
+                        <div class="controls">
+                            <input type="text" id="name" placeholder="文件名字">
+                            <span class="help-inline">文件名字必填</span>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <div class="controls">
+                            <button type="submit" class="btn btn-primary">创建JS文件</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+<script type="text/javascript">
+function submitPage(e) {
+    var name = $('#name').val();
+    if ($('.control-group').hasClass('error')) $('.control-group').removeClass('error');
+    if (!name) {
+        $('#name').parents('.control-group').addClass('error').end().focus();
+    } else {
+        $.post('/createCtrl', {
+            name: name
+        }, function(data) {
+            if (!data.status) {
+                return;
+            }
+            var config = {
+                title: '消息提示',
+                text: data.mes,
+                delay: 1000,
+                type: 'success',
+                stack: {
+                    "dir1": "down",
+                    "dir2": "left",
+                    "firstpos1": 66,
+                    "firstpos2": 36
+                }
+            }
+            new PNotify(config);
+        }, 'json');
+    }
+}
+</script>
+
+</html>

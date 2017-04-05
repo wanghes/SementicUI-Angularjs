@@ -1,0 +1,7 @@
+{
+  "name": "jsonService",
+  "scripts": {
+    "test": "json-server db.json --port 3578 --routes route.json --watch"
+  },
+  "author": "wang_hes"
+}
