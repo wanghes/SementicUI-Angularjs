@@ -19,11 +19,8 @@ let homeModule = angular.module('homeModule', [
 
 export default function() {
     homeModule.controller("homeCtrl", homeCtrl)
-    homeCtrl.$inject = ['$scope', '$interval', 'uiGridConstants', 'i18nService', '$q', 'pNotify',
-        'tableFactory', 'tableModal', '$timeout', 'BASE_URL', 'services', 'urlCode'
-    ];
-
-    function homeCtrl($scope, $interval, uiGridConstants, i18nService, $q, pNotify, tableFactory, tableModal, $timeout, BASE_URL, services, oauth, urlCode) {
+    homeCtrl.$inject = ['$scope', 'pNotify', 'tableFactory', 'tableModal', '$timeout', 'BASE_URL', 'services', 'utils'];
+    function homeCtrl($scope, pNotify, tableFactory, tableModal, $timeout, BASE_URL, services , utils) {
         $scope.searchData = {};
 
         //初始化查询结果
@@ -98,7 +95,7 @@ export default function() {
             width: 150
         }];
 
-        $scope.gridOptions = tableFactory.init($scope, $interval, i18nService, $q, uiGridConstants, columnDefs, {
+        $scope.gridOptions = tableFactory.init($scope, columnDefs, {
             ifDetail: false,
             pagingOptions: true,
             enableFullRowSelection: true,

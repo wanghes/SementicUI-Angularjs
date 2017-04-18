@@ -15,10 +15,10 @@
   "author": "wang_hes",
   "license": "ISC",
   "dependencies": {
-    "angular": "^1.5.8",
-    "angular-cookies": "^1.5.8",
-    "angular-resource": "^1.5.8",
-    "angular-ui-grid": "^3.2.6"
+    "angular": "1.5.8",
+    "angular-cookies": "1.5.8",
+    "angular-resource": "1.5.8",
+    "angular-ui-grid": "3.2.6"
   },
   "devDependencies": {
     "babelify": "^7.3.0",

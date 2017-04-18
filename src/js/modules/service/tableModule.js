@@ -1,3 +1,4 @@
+import utilsModule from '../tools/utils';
 let tableModule = angular.module('tableModule', [
     'ui.grid',
     'ui.grid.autoResize',
@@ -8,13 +9,15 @@ let tableModule = angular.module('tableModule', [
     'ui.grid.moveColumns',
     'ui.grid.pinning',
     'ui.grid.cellNav',
-    'ui.grid.grouping'
+    'ui.grid.grouping',
+    'utilsModule'
 ]);
 
 tableModule.factory('tableFactory',
-    function() {
+    function($timeout,$q,$interval,i18nService,uiGridConstants,uiGridColumnMenuService,uiGridMoveColumnService,utils) {
         var factory = {};
         var tableConfigs = [];
+
         function array_unique(ar){
             var m,n=[],o= {};
             for (var i=0;(m= ar[i])!==undefined;i++){
@@ -24,7 +27,7 @@ tableModule.factory('tableFactory',
             }
             return n.sort(function(a,b){return a-b});;
         }
-        factory.init = function(scope, $interval, i18nService, $q, uiGridConstants, columnDefs, config){
+        factory.init = function(scope, columnDefs, config){
             var fakeI18n;
             i18nService.setCurrentLang('zh-cn');
             fakeI18n = function(title) {
@@ -47,12 +50,30 @@ tableModule.factory('tableFactory',
                 default:
                 ifEnableHorizontalScrollbar = uiGridConstants.scrollbars.WHEN_NEEDED;
             }
-            
 
+
+            //获取用户上次拖拽表头的保存信息，并重新初始化字段列表
+            if(config.allowMenuReset && config.menuReset){
+                let localStorageMenus = utils.localStorage.get(config.menuReset);
+                if(localStorageMenus){
+                   let menus = localStorageMenus.split(',');
+                   let colDefs = menus.map(function(item){
+                      let arr = columnDefs.filter(function(it){
+                         if(it.field == item) return it;
+                      })
+                      return arr[0]
+                   })
+                   columnDefs = colDefs;
+                }
+            }
+
+
+            scope.uiGridConstants = uiGridConstants;
             factory.gridOptions = {
                 rowHeight: 30,
                 enableFiltering: false, //启用行过滤条件
                 enableSorting: true,
+                allowCellFocus:true,
                 enableColumnMenus:config.enableColumnMenus?config.enableColumnMenus:false,
                 enableGridMenu: config.enableGridMenu ? config.enableGridMenu : false, //是否启用显示右上角总控制菜单
                 enableColumnResizing: true, //是否启用可控的列宽的伸缩
@@ -75,23 +96,28 @@ tableModule.factory('tableFactory',
                 useExternalPagination: true,//自定义sort
                 useExternalSorting: true,//自定义sort
                 showColumnFooter:false,
-                infiniteScrollDown:false,
+                infiniteScrollDown:true,
+                minRowsToShow:100,
+                scrollDebounce:0,
+                wheelScrollThrottle:0,
                 plugins: [new ngGridFlexibleHeightPlugin()],
                 onRegisterApi:function(gridApi){
                     //console.log(gridApi);
-                    
-                    if(config.initialColumnOrder){
-                        gridApi.core.on.rowsRendered(scope,function(){
-                            scope[config.initialColumnOrder] =  scope.gridApi.grid.columns.slice();
-                            //console.log('scope.gridApi.grid.columns',scope.gridApi.grid.columns);
-                        });
+                    //console.log(uiGridMoveColumnService);
 
-                        if(scope[config.initialColumnOrder]) {
-                            var columnDefsColMov = scope.gridApi.grid.moveColumns.orderCache;
-                            columnDefsColMov.length = 0;
-                            columnDefsColMov.push.apply(columnDefsColMov, scope[config.initialColumnOrder])
-                            scope.gridApi.core.notifyDataChange(uiGridConstants.dataChange.COLUMN );
-                        }
+                    //保存用户拖拽表头的新秩序
+                    if(config.allowMenuReset && config.menuReset){
+                        gridApi.colMovable.on.columnPositionChanged(scope,function(colDef, originalPosition, newPosition){
+                            //console.log(colDef);
+                            //console.log(originalPosition);
+                            //console.log(newPosition);
+                            //gridApi.colMovable.moveColumn(5,6);
+                            var arr  = gridApi.grid.moveColumns.orderCache;
+                            var indexsArr = arr.map(function(item){
+                              return item.field;
+                            });
+                            utils.localStorage.set(config.menuReset,indexsArr);
+                        });
                     }
 
 
@@ -186,7 +212,7 @@ tableModule.factory('tableFactory',
 
                     //列的显示与隐藏回调
                     /*gridApi.core.on.columnVisibilityChanged(scope,function(){
-                        
+
                     })*/
                    gridApi.cellNav.on.navigate(scope,function(newRowCol, oldRowCol){
                         //console.log(newRowCol);
@@ -199,6 +225,7 @@ tableModule.factory('tableFactory',
                     gridApi.selection.on.rowSelectionChanged(scope, function(row) {
                         //scope.gridApi.selection.clearSelectedRows();
                         //console.log(scope.gridApi.selection.getSelectAllState());
+                        //console.log(gridApi.grid.api.cellNav.getCurrentSelection());
                         if(row.isSelected){
                             if(config.selectedRowsIndexs){
                                 scope[config.selectedRowsIndexs].push(gridApi.grid.renderContainers.body.visibleRowCache.indexOf(row));
@@ -282,7 +309,7 @@ tableModule.factory('tableFactory',
                 factory.gridOptions.enablePaginationControls = false;
             }
 
-            
+
             /*
             * 初始化按钮的的禁用状态并监听按钮的disable的状态值
             */

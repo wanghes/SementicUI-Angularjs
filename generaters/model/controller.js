@@ -19,11 +19,8 @@ let [$name$]Module = angular.module('[$name$]Module', [
 
 export default function() {
     [$name$]Module.controller("[$name$]Ctrl", [$name$]Ctrl);
-    [$name$]Ctrl.$inject = ['$scope', '$interval', 'uiGridConstants', 'i18nService', '$q', 'pNotify',
-        'tableFactory', 'tableModal', '$timeout', 'BASE_URL', 'services', 'urlCode'
-    ];
-
-    function [$name$]Ctrl($scope, $interval, uiGridConstants, i18nService, $q, pNotify, tableFactory, tableModal, $timeout, BASE_URL, services, oauth, urlCode) {
+    [$name$]Ctrl.$inject = ['$scope', 'pNotify','tableFactory', 'tableModal', '$timeout', 'BASE_URL', 'services', 'utils'];
+    function [$name$]Ctrl($scope, pNotify, tableFactory, tableModal, $timeout, BASE_URL, services, utils) {
         $scope.searchData = {};
 
         //初始化查询结果
@@ -98,7 +95,7 @@ export default function() {
             width: 150
         }];
 
-        $scope.gridOptions = tableFactory.init($scope, $interval, i18nService, $q, uiGridConstants, columnDefs, {
+        $scope.gridOptions = tableFactory.init($scope, columnDefs, {
             ifDetail: false,
             pagingOptions: true,
             enableFullRowSelection: true,
@@ -108,7 +105,9 @@ export default function() {
             multiSelect: true,
             enableGridMenu: true,
             getPage: getData,
-            item: "item"
+            item: "item",
+            allowMenuReset:true,
+            menuReset:'homeColumns'
         });
 
         function getData() {

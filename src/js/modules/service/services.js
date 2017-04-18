@@ -4,11 +4,11 @@ import pNotifyFactory from './pNotify';
 
 let serviceModule = angular.module('serviceModule', ['ngResource', 'utilsModule',"pNotifyModule"]);
 let href = window.parent.location.href;
-serviceModule.value('APPID', '6f7cec50-d249-11e6-a54f-5fe21197bf57');
-if(href.indexOf('huoyunren') == -1){
-    serviceModule.value('BASE_URL', 'http://sot.chinawayltd.com:8080');
+serviceModule.value('APPID', '*******************');
+if(href.indexOf('web') == -1){
+    serviceModule.value('BASE_URL', '**********************');
 } else {
-    serviceModule.value('BASE_URL', 'http://zqx.huoyunren.com/sot');
+    serviceModule.value('BASE_URL', '***********************');
 }
 
 serviceModule.config(['$httpProvider', '$qProvider', function ($httpProvider,$qProvider) {
@@ -44,7 +44,7 @@ serviceModule.factory('timestampMarker', ['$q', "$timeout", "BASE_URL", "$rootSc
                     if(response.data.code==9001){
                         window.parent.location.href = BASE_URL + "/web/logout?redirect_uri=" +lastHref;
                     }else if(response.data.code==3){
-
+                        pNotify.show(response.data.message,'error');
                     }else if(response.data.code==2){
                         pNotify.show(response.data.message,'error');
                     }else if(response.data.code==23000){
@@ -68,10 +68,10 @@ serviceModule.factory('timestampMarker', ['$q', "$timeout", "BASE_URL", "$rootSc
 /***
 用户认证
 ***/
-serviceModule.factory('oauth', ['$resource', 'urlCode', 'APPID', 'BASE_URL',"$timeout",'pNotify',
-    function($resource, urlCode, APPID, BASE_URL,$timeout,pNotify) {
-        const URL_CODE = urlCode.getUrlCode();
-        const API_TOKEN = urlCode.getApiToken();
+serviceModule.factory('oauth', ['$resource', 'utils', 'APPID', 'BASE_URL',"$timeout",'pNotify',
+    function($resource, utils, APPID, BASE_URL,$timeout,pNotify) {
+        const URL_CODE = utils.getUrlCode();
+        const API_TOKEN = utils.getApiToken();
 
         return {
             appId:APPID,
@@ -103,7 +103,7 @@ serviceModule.factory('oauth', ['$resource', 'urlCode', 'APPID', 'BASE_URL',"$ti
                 let href = window.parent.location.href;
                 let index = href.indexOf('?');
                 let lastHref = encodeURIComponent(href.slice(0,index));
-                urlCode.deleteApiToken();
+                utils.deleteApiToken();
                 window.parent.location.href = BASE_URL + "/web/logout?redirect_uri=" +lastHref
             },
             callJudgeLogin: function(cb) {
@@ -116,7 +116,7 @@ serviceModule.factory('oauth', ['$resource', 'urlCode', 'APPID', 'BASE_URL',"$ti
                     if (result.code == 0) {
                         $('#mainLoading', parent.document).hide();
                         if(result.data.api_token!=API_TOKEN || !API_TOKEN){
-                             urlCode.setApiToken(result.data.api_token);
+                             utils.setApiToken(result.data.api_token);
                         }
                         let userInfo = result.data.userInfo;
                         cb(userInfo);

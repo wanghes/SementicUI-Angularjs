@@ -8,7 +8,7 @@ let loginModule = angular.module('loginModule',[
 export default function login(){
     loginModule.controller('loginCtrl',loginCtrl);
     loginCtrl.$inject = ['$scope','users','$cookies'];
-    function loginCtrl($scope, users,$cookies){
+    function loginCtrl($scope, users, $cookies){
          $scope.loginInfo = {
             name:'',
             password : ''

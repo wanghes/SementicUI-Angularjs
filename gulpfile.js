@@ -26,7 +26,7 @@ gulp.task('lib',function(){
         './src/js/lib/semantic.min.js',
         //'./src/js/lib/echarts-all.js',
         './src/js/lib/scrollBar.js',
-        './src/js/lib/slideOut.js',
+        './src/js/lib/slideout.js',
         './src/js/lib/pnotify.js',
         './src/js/lib/dateRange.js',
         './src/js/lib/jquery.ztree.all.min.js'
