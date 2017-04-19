@@ -11,7 +11,7 @@
     <div class="ui">
         <div>
             <div class="ui massive message">
-                <span class="user">{{nickname}}</span> 欢迎登录
+                <span class="user">{{nickname}};</span> <span ng-bind-html="loginMessage | to_trusted"></span>
             </div>
         </div>
     </div>

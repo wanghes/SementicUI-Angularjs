@@ -88,8 +88,8 @@ export default function() {
             allowCellFocus: false,
             width: 150
         }, {
-            field: "test02",
-            displayName: "测试字段02",
+            field: "test03",
+            displayName: "测试字段03",
             enableSorting: true,
             allowCellFocus: false,
             width: 150
@@ -105,7 +105,9 @@ export default function() {
             multiSelect: true,
             enableGridMenu: true,
             getPage: getData,
-            item: "item"
+            item: "item",
+            allowMenuReset:true,
+            menuReset:'homeColumns'
         });
 
         function getData() {

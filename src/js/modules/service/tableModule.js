@@ -1,4 +1,4 @@
-import utilsModule from '../tools/utils';
+import utilsModule from './utils';
 let tableModule = angular.module('tableModule', [
     'ui.grid',
     'ui.grid.autoResize',

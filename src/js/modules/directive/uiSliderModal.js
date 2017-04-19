@@ -132,6 +132,7 @@ export default function($timeout, pNotify, services, $sce) {
                     direction: 'downward',
                     fullTextSearch: true,
                     transition: 'slide down',
+                    forceSelection:false,
                     onChange: function(value, text, $selectedItem) {
                         //console.log(value+"---------"+text);
                         ////这里需要todo
