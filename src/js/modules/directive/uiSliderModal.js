@@ -2,81 +2,103 @@ export default function($timeout, pNotify, services, $sce) {
     return {
         restrict: 'E',
         replace: true,
-        template: `<div class="ui right sidebar custom_sidebar" id="{{id}}" style="{{sidebarStyle}}">
-                        <div class="custom_sidebar_inner">
-                            <h3 class="ui dividing header"><i class="{{icon}} icon"></i>{{title}}</h3>
-                            <div class="insert_wrap">
-                                <div id="{{id}}InsertSlider" style="width:100%; height:100%; display:flex;">
-                                    <form ng-show="fields.length>0" style="width:{{formWidth}}" id="{{id}}InsertedForm" class="insert_slider ui form clearfix">
-                                        <div ng-repeat="field in fields" class="form_item"
-                                        style="{{itemStyle}}{{(field.type=='area'&&field.level==3 || field.level==2) || field.type=='textarea' ? 'width:100%':itemWidth}}">
-                                            <div ng-if="field.type =='input'" class="sixteen wide field slider_io">
-                                                <label>{{field.name}}</label>
-                                                <input type="text" name="{{field.field_name}}" placeholder="{{field.defaultText}}" value="{{field.value}}" ng-model="field.value">
-                                            </div>
-                                            <div ng-if="field.type=='dropdownOne'" class="sixteen wide field slider_io">
-                                                <label>{{field.name}}</label>
-                                                <div class="ui search selection dropdown" data-func="{{field.defaultFuncName}}">
-                                                     <input name="{{field.field_name}}" type="hidden" value="{{field.value}}">
-                                                     <i class="dropdown icon"></i>
-                                                     <div ng-class="{true: 'text', false: 'text default'}[field.text.length>0]">
-                                                     {{field.text || field.defaultText}}</div>
-                                                     <div class="menu">
-                                                        <div class="item" ng-repeat="data in field.data" data-value="{{data.value}}">{{data.name}}</div>
-                                                     </div>
-                                                </div>
-                                            </div>
-                                            <div ng-if="field.type=='dropdownTwo'" class="sixteen wide field slider_io">
-                                                <label>{{field.name}}</label>
-                                                <div class="ui search selection dropdown multiple" data-func="{{field.defaultFuncName}}">
-                                                    <input name="{{field.field_name}}" type="hidden" value="{{field.value}}">
-                                                    <i class="dropdown icon"></i>
-                                                    <div class="text default">{{field.text || field.defaultText}}</div>
-                                                    <div class="menu">
-                                                        <div class="item" ng-repeat="data in field.data" data-value="{{data.value}}">{{data.name}}</div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div ng-if="field.type=='dropdownTree'" class="sixteen wide field slider_io">
-                                                <tree-view item="field"></tree-view>
-                                            </div>
-                                            <div ng-if="field.type=='file'" class="sixteen wide field slider_io">
-                                                <label>{{field.name}}</label>
-                                                <div class="ui action input">
-                                                    <input type="text" name="{{field.field_name}}" id="{{field.field_name}}_attachmentName"
-                                                    value="{{field.value}}" placeholder="{{field.defaultText}}">
-                                                    <label for="{{field.field_name}}" class="ui icon button btn-file">
-                                                         <span>选择文件</span><i class="attach icon"></i>
-                                                         <input type="file" id="{{field.field_name}}" data-field-name="{{field.field_name}}"
-                                                         data-api-service="{{field.apiService}}"
-                                                         onchange="angular.element(this).scope().changeFileFunc(this)"
-                                                         name="{{field.field_name}}" style="display:none;">
-                                                    </label>
-                                                </div>
-                                            </div>
-                                            <div ng-if="field.type=='textarea'" class="sixteen wide field slider_io">
-                                                <label>{{field.name}}</label>
-                                                <textarea rows="3" name="{{field.field_name}}" ng-model="field.value" placeholder="{{field.defaultText}}">
-                                                {{field.value}}
-                                                </textarea>
-                                            </div>
-                                             <div ng-if="field.type=='area'" class="sixteen wide field slider_io">
-                                                <label>{{field.name}}</label>
-                                                <input type="hidden" name="{{field.field_name}}" value="{{field.value}}">
-                                                <ui-city selected-province="field.value" level="{{field.level}}"></ui-city>
-                                            </div>
+        template: `
+        <div class="ui right sidebar custom_sidebar" id="{{id}}" style="{{sidebarStyle}}">
+            <div class="custom_sidebar_inner">
+                <h3 class="ui dividing header"><i class="{{icon}} icon"></i>{{title}}</h3>
+                <div class="insert_wrap">
+                    <div id="{{id}}InsertSlider" style="width:100%; height:100%; display:flex;">
+                        <form ng-show="fields.length>0" style="width:{{formWidth}}" id="{{id}}InsertedForm" class="insert_slider ui form clearfix">
+                            <div ng-repeat="field in fields" class="form_item"
+                            style="{{itemStyle}}{{(field.type=='area' && field.level==3 || field.level==2) || field.type=='textarea' ? 'width:100%':itemWidth}}">
+                                <div ng-if="field.type =='input'" class="sixteen wide field slider_io">
+                                    <label>{{field.name}}</label>
+                                    <input type="text"
+                                    name="{{field.field_name}}"
+                                    placeholder="{{field.defaultText}}"
+                                    value="{{field.value}}"
+                                    ng-model="field.value">
+                                </div>
+                                <div ng-if="field.type=='dropdownOne'" class="sixteen wide field slider_io">
+                                    <label>{{field.name}}</label>
+                                    <div class="ui search selection dropdown" data-func="{{field.defaultFuncName}}">
+                                        <input type="hidden"
+                                        name="{{field.field_name}}"
+                                        value="{{field.value}}" />
+                                        <i class="dropdown icon"></i>
+                                        <div ng-class="{true: 'text', false: 'text default'}[field.text.length>0]">
+                                            {{field.text || field.defaultText}}
                                         </div>
-                                        <div class="insert_slider_buttons">
-                                            <button ng-repeat="sliderButton in sliderButtons" id="{{sliderButton.id}}"
-                                            class="ui mini {{sliderButton.className}} button" ng-click="emitClick(sliderButton.func)">
-                                            {{sliderButton.name}}</button>
+                                        <div class="menu">
+                                            <div class="item" ng-repeat="data in field.data" data-value="{{data.value}}">{{data.name}}</div>
                                         </div>
-                                    </form>
-                                    <div id="cludeBox" class="other_html_wrap" ng-transclude></div>
+                                    </div>
+                                </div>
+                                <div ng-if="field.type=='dropdownTwo'" class="sixteen wide field slider_io">
+                                    <label>{{field.name}}</label>
+                                    <div class="ui search selection dropdown multiple" data-func="{{field.defaultFuncName}}">
+                                        <input type="hidden"
+                                        name="{{field.field_name}}"
+                                        value="{{field.value}}" />
+                                        <i class="dropdown icon"></i>
+                                        <div class="text default">{{field.text || field.defaultText}}</div>
+                                        <div class="menu">
+                                            <div class="item" ng-repeat="data in field.data" data-value="{{data.value}}">{{data.name}}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div ng-if="field.type=='dropdownTree'" class="sixteen wide field slider_io">
+                                    <tree-view item="field"></tree-view>
+                                </div>
+                                <div ng-if="field.type=='file'" class="sixteen wide field slider_io">
+                                    <label>{{field.name}}</label>
+                                    <div class="ui action input">
+                                        <input type="text"
+                                        name="{{field.field_name}}"
+                                        id="{{field.field_name}}_attachmentName"
+                                        value="{{field.value}}"
+                                        placeholder="{{field.defaultText}}" />
+                                        <label for="{{field.field_name}}" class="ui icon button btn-file">
+                                             <span>选择文件</span><i class="attach icon"></i>
+                                             <input type="file" id="{{field.field_name}}" data-field-name="{{field.field_name}}"
+                                             data-api-service="{{field.apiService}}"
+                                             onchange="angular.element(this).scope().changeFileFunc(this)"
+                                             name="{{field.field_name}}" style="display:none;">
+                                        </label>
+                                    </div>
+                                </div>
+                                <div ng-if="field.type=='textarea'" class="sixteen wide field slider_io">
+                                    <label>{{field.name}}</label>
+                                    <textarea rows="3"
+                                    name="{{field.field_name}}"
+                                    ng-model="field.value"
+                                    placeholder="{{field.defaultText}}">
+                                    {{field.value}}
+                                    </textarea>
+                                </div>
+                                 <div ng-if="field.type=='area'" class="sixteen wide field slider_io">
+                                    <label>{{field.name}}</label>
+                                    <input type="hidden"
+                                    name="{{field.field_name}}"
+                                    value="{{field.value}}" />
+                                    <ui-city selected="field.value" level="{{field.level}}"></ui-city>
                                 </div>
                             </div>
-                        </div>
-                  </div>`,
+                            <div class="insert_slider_buttons">
+                                <button
+                                id="{{sliderButton.id}}"
+                                ng-repeat="sliderButton in sliderButtons"
+                                class="ui mini {{sliderButton.className}} button"
+                                ng-click="emitClick(sliderButton.func)">
+                                {{sliderButton.name}}
+                                </button>
+                            </div>
+                        </form>
+                        <div id="cludeBox" class="other_html_wrap" ng-transclude></div>
+                    </div>
+                </div>
+            </div>
+        </div>`,
         transclude: true,
         scope: {
             sliderInfo: '='
@@ -273,7 +295,7 @@ export default function($timeout, pNotify, services, $sce) {
                                 break;
                             case "textarea":
                                 formData[`${item.field_name}`] = $(`#${scope.formID} textarea[name='${item.field_name}']`).val();
-                                break;
+                            break;
                         }
                     });
                     return angular.extend(scope.formData, formData);

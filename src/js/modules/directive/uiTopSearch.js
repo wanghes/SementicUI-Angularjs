@@ -15,7 +15,8 @@ export default function(){
         scope:{
             searchKeys:'=',
             searchModalId:"@",
-            searchColumnNum:"@"
+            searchColumnNum:"@",
+            searchData:"=searchData"
         },
         controller:function($scope){
             let originSearchKeysFields = angular.copy($scope.searchKeys.fields);

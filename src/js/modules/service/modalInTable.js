@@ -1,5 +1,6 @@
 let modalInTableModule = angular.module('modalInTableModule', []);
-modalInTableModule.factory('templateLoader', ['$compile',
+modalInTableModule.factory('templateLoader', [
+    '$compile',
     '$document',
     '$controller',
     '$http',
@@ -95,7 +96,7 @@ modalInTableModule.factory('tableModal', [
                 }else if(options.openType=='sidebar'){
                     $(modal.element).sidebar({
                         dimPage: true,
-                        closable: true,
+                        closable: !options.closable?false:true,
                         scrollLock: true,
                         transition:options.transition ? options.transition : 'overlay',
                         onHidden:function(){

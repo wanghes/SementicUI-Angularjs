@@ -2,7 +2,6 @@ export default function($timeout) {
     return {
         restrict: 'E',
         priority:9999,
-        //templateUrl: './tpl/selectTwo.html',
         template:`<div class="ui search selection dropdown {{model.multi?'multiple':''}}" id="searchItem_{{model.ID}}">
                      <input name="modelValue" type="hidden" value="{{model.value}}">
                      <i class="dropdown icon"></i>
@@ -106,15 +105,6 @@ export default function($timeout) {
                 $(elem).find('.ui.dropdown .default_text').addClass('default').text(defaultVal);
             });
 
-            //寻找请求中的数据是否已经被删除，删除的话将自动删除选中的标签
-            scope.deleteNonExistValues = function(data,value){
-                angular.forEach(data,function(item){   
-                    if(value.indexOf(item.id)<0){
-                        $('a[data-value="'+item.id+'"] i').trigger('click'); //触发删除按钮
-                    }
-                })
-            };
-            //来个数组去重
             scope.array_unique = function(ar){
                 var m,n=[],o= {};
                 for (var i=0;(m= ar[i])!==undefined;i++){
@@ -124,11 +114,15 @@ export default function($timeout) {
                 }
                return n;
             }
-            //删除已经存在的数据
-            scope.deleteExistData = function(){
 
+            //寻找请求中的数据是否已经被删除，删除的话将自动删除选中的标签
+            scope.deleteNonExistValues = function(data,value){
+                angular.forEach(data,function(item){   
+                    if(value.indexOf(item.id)<0){
+                        $('a[data-value="'+item.id+'"] i').trigger('click'); //触发删除按钮
+                    }
+                })
             };
-
-         }
+        }
     };
 };

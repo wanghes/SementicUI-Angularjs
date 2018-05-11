@@ -18,9 +18,12 @@ import uiButtonGroup from './uiButtonGroup';
 import uiLeanModal from './uiLeanModal';
 import uiSliderModal from './uiSliderModal';
 import uiCity from './uiCity';
+import uiRadio from './uiRadio';
 import uiPopupContent from './uiPopupContent';
+import uiTableIntro from './uiTableIntro';
+import uiSearchComplete from './uiSearchComplete';
 import uiTreeView from './uiTreeView'; /**树状tree**/
-
+import uiConfirm from './uiConfirm'; 
 
 /****************自定义组件****************/
 
@@ -40,17 +43,25 @@ trackDirectiveModule.directive('treeView',
         return uiTreeView($timeout);
 });
 
-trackDirectiveModule.directive('mainBox',function($timeout){
+trackDirectiveModule.directive('mainBox',($timeout) => {
     return uiMainBox($timeout);
 });
-trackDirectiveModule.directive('tabBox',function(services){
+trackDirectiveModule.directive('tabBox',(services) => {
     return uiTabBox(services);
 });
+trackDirectiveModule.directive('uiRadio',uiRadio);
+
 trackDirectiveModule.directive('tab',uiTab);
+trackDirectiveModule.directive('uiTableIntro',uiTableIntro);
 trackDirectiveModule.directive('topSearch',uiTopSearch);
 trackDirectiveModule.directive('topSearchForm',uiTopSearchForm);
-trackDirectiveModule.directive('uiSearchedItems',uiTopSearchedItems);
-trackDirectiveModule.directive('inputValidate',function(pNotify){
+trackDirectiveModule.directive('uiSearchedItems',($timeout)=>{
+    return uiTopSearchedItems($timeout);
+});
+trackDirectiveModule.directive('uiSearchComplete',(services,$timeout) => {
+    return uiSearchComplete(services,$timeout);
+});
+trackDirectiveModule.directive('inputValidate',(pNotify) => {
     return uiInputValidate(pNotify);
 });
 trackDirectiveModule.directive('uiDateRange',function($timeout){
@@ -74,7 +85,9 @@ trackDirectiveModule.directive('uiCity',function($timeout,pNotify,services){
 });
 
 trackDirectiveModule.directive('gridLoading', uiGridLoading);
-
+trackDirectiveModule.directive('uiConfirm', function($timeout){
+        return uiConfirm($timeout);
+});
 trackDirectiveModule.directive('popupContent',uiPopupContent);
 
 

@@ -22,7 +22,7 @@ export default function() {
     homeCtrl.$inject = ['$scope', 'pNotify', 'tableFactory', 'tableModal', '$timeout', 'BASE_URL', 'services', 'utils'];
     function homeCtrl($scope, pNotify, tableFactory, tableModal, $timeout, BASE_URL, services , utils) {
         $scope.searchData = {};
-
+        $scope.isRefresh = false;
         //初始化查询结果
         function setInitDate(day) {
             let start, end, startTime, endTime;
@@ -42,8 +42,9 @@ export default function() {
                 timeArea: {
                     name: '时间范围',
                     defaultText: "请选择时间范围",
-                    text: `${$scope.searchData.start_time} 至 ${$scope.searchData.end_time}`,
-                    value: [$scope.searchData.start_time, $scope.searchData.end_time],
+                    text: "",
+                    value: "",
+                    ranges:7,
                     id: "TimeArea",
                     type: "timePicker",
                 },
@@ -74,22 +75,25 @@ export default function() {
             }
         };
 
+        services.posts.query({}, (data) => {
+            console.log(data);
+        })
 
         let columnDefs = [{
-            field: "test01",
-            displayName: "测试字段01",
+            field: "title",
+            displayName: "标题",
+            enableSorting: true,
+            allowCellFocus: false,
+            width: 500
+        }, {
+            field: "author_name",
+            displayName: "作者",
             enableSorting: true,
             allowCellFocus: false,
             width: 150
         }, {
-            field: "test02",
-            displayName: "测试字段02",
-            enableSorting: true,
-            allowCellFocus: false,
-            width: 150
-        }, {
-            field: "test03",
-            displayName: "测试字段03",
+            field: "date",
+            displayName: "发布日期",
             enableSorting: true,
             allowCellFocus: false,
             width: 150
@@ -110,28 +114,27 @@ export default function() {
             menuReset:'homeColumns'
         });
 
+
         function getData() {
-            let data = $scope.searchData;
+            let data = angular.copy($scope.searchData);
             data.page = $scope.gridOptions.paginationCurrentPage;
             data.per_page = $scope.gridOptions.paginationPageSize;
-
-            //异步获取数据TODO
-            $timeout(function() {
-                $scope.gridOptions.totalItems = 10;
-                $scope.gridOptions.data = [
-                    { test01: "test01", test02: "test02", test03: "test03" },
-                    { test01: "test01", test02: "test02", test03: "test03" },
-                    { test01: "test01", test02: "test02", test03: "test03" },
-                    { test01: "test01", test02: "test02", test03: "test03" },
-                    { test01: "test01", test02: "test02", test03: "test03" },
-                    { test01: "test01", test02: "test02", test03: "test03" },
-                    { test01: "test01", test02: "test02", test03: "test03" },
-                    { test01: "test01", test02: "test02", test03: "test03" },
-                    { test01: "test01", test02: "test02", test03: "test03" },
-                    { test01: "test01", test02: "test02", test03: "test03" }
-                ];
-            }, 2000)
+            $scope.gridLoading = true;
+            services.posts.query(data,(data) => {
+                $scope.$broadcast('hideloading');
+                $scope.gridOptions.totalItems = 50;
+                let newData = data.data.articles;
+                $scope.gridOptions.data = newData;
+                $scope.gridLoading = false;
+                $scope.initTableData();
+                if($scope.isRefresh) {
+                    pNotify.show('刷新成功','success');
+                    $scope.isRefresh = false;//刷新完之后再将isRefresh置为false，否则则会一直弹这个刷新成功
+                    $scope.resetTableData(); //重置表格的相关数据
+                }
+            });
         }
+
         getData();
 
 
@@ -196,7 +199,7 @@ export default function() {
             action: {
                 operateFunctions: {
                     open: function() {
-                        window.parent.open('http://www.baicu.com');
+                        window.parent.open('http://www.baidu.com');
                     }
                 }
             },
@@ -210,10 +213,19 @@ export default function() {
             fieldsColumn: 2,
             modalSize: "small",
             modalButtons: [
-                { name: "确定", className: "teal", id: "OkBtn", func: "close" },
+                { name: "确定", className: "teal", id: "OkBtn", func: "submitFormFunc" },
                 { name: "取消", className: "black deny", id: "CancelBtn", func: "close" }
             ],
-            operateFunctions: {},
+            operateFunctions: {
+                submitFormFunc(result) {
+                    return new Promise((resolve,resject) =>{
+                        setTimeout(() =>{
+                            console.log(result);
+                            resolve(true);
+                        }, 1500)
+                    })
+                }
+            },
             fields: [{
                 type: "input",
                 name: "姓名",

@@ -1,4 +1,4 @@
-export default function() {
+export default function($timeout) {
     return {
         restrict: 'E',
         require: ['^?topSearch'],
@@ -12,6 +12,7 @@ export default function() {
                         </div>
                     </div>`,
         replace: true,
+
         controller:function($scope){
              //console.log($scope) 
         },
@@ -20,13 +21,6 @@ export default function() {
             scope.openSearchModal = function(){
                 topSearchCtrl[0].openSearchModal(); //跟topSearch耦合在一起
             };
-
-            if(scope.searchKeys==null || angular.equals({}, scope.searchKeys)){
-                $('#searchList').html("<span style='color:#999'>目前还没有相关的搜索信息!</span>")
-                .parents('.common_label')
-                .css("user-select","none");
-                return;
-            }
 
             scope.generateLabel = function(data){
                 return `<span class="item" data-key="${data.keyWord}">${data.name}&nbsp;<strong>:</strong>&nbsp;${data.valInfo}
@@ -39,51 +33,73 @@ export default function() {
                 scope.labellist.push(label);
             }
 
-            //创建显示搜索项的labels
-            scope.$watch('searchKeys', function(newVal, oldVal) {
-                if(oldVal==newVal) return;
-                scope.labellist = [];
-                let fields = scope.searchKeys.fields;
-                let addble=false, html,keyWord,valInfo;
-                for (keyWord in fields) {
-                    addble=false
-                    //text用来显示labels
-                    if(fields[keyWord].text) {
-                        valInfo = fields[keyWord].text;
-                        addble=true;
-                    }  
-                    if(fields[keyWord].type=="area" && fields[keyWord].value ){ //若果是地区选择器的话是city.name
-                        addble=true;
-                        if(fields[keyWord].level==1){
-                            let arr = angular.fromJson(fields[keyWord].value);
-                            if(arr.length>0){
-                                valInfo = angular.fromJson(fields[keyWord].value)[0].name;
-                            }
-                        }else{
-                            let areaList = angular.fromJson(fields[keyWord].value);
-                            valInfo = '';
-                            angular.forEach(areaList,function(item){
-                                valInfo += item.name+'-';
-                            });
-                            valInfo =  valInfo.substring(0, valInfo.length - 1);   
-                        }  
-                    } 
-                    if(addble){
-                        scope.outputLabel({
-                            keyWord:keyWord,
-                            name:fields[keyWord].name,
-                            valInfo:valInfo,
-                            type:fields[keyWord].type
-                        });
+            $timeout(()=>{
+                //创建显示搜索项的labels
+                scope.$watch('searchKeys', function(newVal, oldVal) {
+                    if(oldVal==newVal) {
+                        scope.$parent.searchKeys.operateFunction();
+                        return;
                     }
-                    
-                }
-               
-                html = scope.labellist.join('');
-                $('#searchList').html(html);
-                scope.resetScrollBar();
-               
-            }, true);
+                    scope.labellist = [];
+                    let fields = scope.searchKeys.fields;
+                    let searchDataStatus = false;
+                    if(fields){
+                        for(let key in fields){
+                            if(fields[key].value || fields[key].text){
+                                searchDataStatus = true;
+                                break;
+                            }
+                        }
+                    }
+
+                    if(!searchDataStatus){
+                        $('#searchList').html("<span style='color:#999'>目前还没有相关的搜索信息!</span>")
+                        .parents('.common_label')
+                        .css("user-select","none");
+                        return;
+                    }
+
+                    let addble=false, html,keyWord,valInfo;
+                    for (keyWord in fields) {
+                        addble=false
+                        //text用来显示labels
+                        if(fields[keyWord].text) {
+                            valInfo = fields[keyWord].text;
+                            addble=true;
+                        }  
+                        if(fields[keyWord].type=="area" && fields[keyWord].value ){ //若果是地区选择器的话是city.name
+                            addble=true;
+                            if(fields[keyWord].level==1){
+                                let arr = angular.fromJson(fields[keyWord].value);
+                                if(arr.length>0){
+                                    valInfo = angular.fromJson(fields[keyWord].value)[0].name;
+                                }
+                            }else{
+                                let areaList = angular.fromJson(fields[keyWord].value);
+                                valInfo = '';
+                                angular.forEach(areaList,function(item){
+                                    valInfo += item.name+'-';
+                                });
+                                valInfo =  valInfo.substring(0, valInfo.length - 1);   
+                            }  
+                        } 
+                        if(addble){
+                            scope.outputLabel({
+                                keyWord:keyWord,
+                                name:fields[keyWord].name,
+                                valInfo:valInfo,
+                                type:fields[keyWord].type
+                            });
+                            
+                        }  
+                    }
+                   
+                    html = scope.labellist.join('');
+                    $('#searchList').html(html);
+                    scope.resetScrollBar();
+                    scope.$parent.searchKeys.operateFunction();
+                }, true);
+            })
 
             //生成新的labal由于长度发生变化，重新初始化滚动条样式
             scope.resetScrollBar = function(){
@@ -101,7 +117,6 @@ export default function() {
                     $(view).mCustomScrollbar("scrollTo","left"); 
                 }else{
                     $(view).mCustomScrollbar("destroy");
-                
                 }
             };
 
@@ -133,9 +148,7 @@ export default function() {
                     $(`#${topSearchCtrl[0].searchModalId} .area_check select`).val('');
                     break;
                     default:
-
                 }
-                
             }
 
         }

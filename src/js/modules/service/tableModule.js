@@ -37,7 +37,7 @@ tableModule.factory('tableFactory',
                 }, 1000, 1);
                 return deferred.promise;
             }
-
+  
             //是否启用水平滚动条
             var ifEnableHorizontalScrollbar;
             switch(config.enableHorizontalScrollbar){
@@ -63,6 +63,7 @@ tableModule.factory('tableFactory',
                       })
                       return arr[0]
                    })
+                   
                    columnDefs = colDefs;
                 }
             }
@@ -108,10 +109,6 @@ tableModule.factory('tableFactory',
                     //保存用户拖拽表头的新秩序
                     if(config.allowMenuReset && config.menuReset){
                         gridApi.colMovable.on.columnPositionChanged(scope,function(colDef, originalPosition, newPosition){
-                            //console.log(colDef);
-                            //console.log(originalPosition);
-                            //console.log(newPosition);
-                            //gridApi.colMovable.moveColumn(5,6);
                             var arr  = gridApi.grid.moveColumns.orderCache;
                             var indexsArr = arr.map(function(item){
                               return item.field;
@@ -222,10 +219,27 @@ tableModule.factory('tableFactory',
                         scope.gridApi.core.notifyDataChange( uiGridConstants.dataChange.COLUMN );
                     })
                    // scope.gridApi.core.notifyDataChange(uiGridConstants.dataChange.OPTIONS);
+
+                    //点击全选反选批量处理结果集
+                    gridApi.selection.on.rowSelectionChangedBatch(scope, function(row){ 
+                        if(config.selectedItems){
+                            scope[config.selectedItems] = gridApi.selection.getSelectedRows().length; //获取选中行的总行数
+                        }else{
+                            scope.selectedItems = gridApi.selection.getSelectedRows().length; //获取选中行的总行数
+                        }
+
+                        if(config.selectedRows){
+                            scope[config.selectedRows] = gridApi.selection.getSelectedRows();
+                        }else{
+                            scope.selectedRows = gridApi.selection.getSelectedRows();
+                        }
+                    });
                     gridApi.selection.on.rowSelectionChanged(scope, function(row) {
                         //scope.gridApi.selection.clearSelectedRows();
                         //console.log(scope.gridApi.selection.getSelectAllState());
+                        //console.log(scope.gridApi.selection.getSelectedRows());
                         //console.log(gridApi.grid.api.cellNav.getCurrentSelection());
+
                         if(row.isSelected){
                             if(config.selectedRowsIndexs){
                                 scope[config.selectedRowsIndexs].push(gridApi.grid.renderContainers.body.visibleRowCache.indexOf(row));
@@ -299,9 +313,9 @@ tableModule.factory('tableFactory',
             if(config.pagingOptions){
                 factory.gridOptions.useExternalPagination = true;
                 factory.gridOptions.enablePaging = true;//启用分页
-                factory.gridOptions.paginationPageSizes =  [15, 25, 50,100]; //分页设置显示条数数组
+                factory.gridOptions.paginationPageSizes =  [20, 30, 50, 100]; //分页设置显示条数数组
 
-                factory.gridOptions.paginationPageSize = 100;//初始化显示每个分页中显示的item条数
+                factory.gridOptions.paginationPageSize =20;//初始化显示每个分页中显示的item条数
                 factory.gridOptions.enablePaginationControls = true; //启用分页设置
                 factory.gridOptions.paginationCurrentPage = 1;
             }else{

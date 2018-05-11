@@ -3,15 +3,15 @@ export default function($timeout) {
         restrict: 'E',
         priority: 9999,
         template: `<div class="sixteen wide field">
-                                <label class="treeview_label">{{item.name}}</label>
-                                <input type="hidden" name="{{item.field_name}}" readonly  value="{{item.value}}" ng-model="item.field_name">
-                                <div class="ui icon input" style="width:{{item.width}}" >
-                                    <input type="text" class="ztreeShow"  readonly placeholder="{{item.defaultText}}" data-func="{{item.defaultFuncName}}">
-                                    <i class="caret down icon"></i>
-                                </div>
-                                <div class="menuContent" style="display: none;position: absolute;">
-                                    <ul class="ztree" id="{{item.field_name}}" style="margin-top:0; width:100%; height: 250px;" data-type="{{item.treeType}}"></ul>
-                                </div>
+                        <label class="treeview_label">{{item.name}}</label>
+                        <input type="hidden" name="{{item.field_name}}" readonly  value="{{item.value}}" ng-model="item.field_name">
+                        <div class="ui icon input" style="width:{{item.width}}" >
+                            <input type="text" class="ztreeShow"  readonly placeholder="{{item.defaultText}}" data-func="{{item.defaultFuncName}}">
+                            <i class="caret down icon"></i>
+                        </div>
+                        <div class="menuContent" style="display: none;position: absolute;">
+                            <ul class="ztree" id="{{item.field_name}}" style="margin-top:0; width:100%; height: 250px;" data-type="{{item.treeType}}"></ul>
+                        </div>
                     </div>`,
         replace: false,
         transclude: false,

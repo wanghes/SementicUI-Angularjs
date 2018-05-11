@@ -2,14 +2,15 @@ import utilsModule from './utils';
 import cityJson from './cityJson';
 import pNotifyFactory from './pNotify';
 
-let serviceModule = angular.module('serviceModule', ['ngResource', 'utilsModule',"pNotifyModule"]);
+let serviceModule = angular.module('serviceModule', [
+    'ngResource',
+    'utilsModule',
+    "pNotifyModule"
+]);
 let href = window.parent.location.href;
 serviceModule.value('APPID', '*******************');
-if(href.indexOf('web') == -1){
-    serviceModule.value('BASE_URL', '**********************');
-} else {
-    serviceModule.value('BASE_URL', '***********************');
-}
+serviceModule.value('BASE_URL', 'http://localhost:3000');
+serviceModule.value('HOST',  '***********************');
 
 serviceModule.config(['$httpProvider', '$qProvider', function ($httpProvider,$qProvider) {
     $qProvider.errorOnUnhandledRejections(false);
@@ -81,11 +82,11 @@ serviceModule.factory('oauth', ['$resource', 'utils', 'APPID', 'BASE_URL',"$time
                 method: 'get',
                 headers: {
                     "Accept": "application/json",
-                    "Content-Type": "application/json",
+                    "Content-Type": 'application/json',
                     "apitoken": API_TOKEN
                 },
                 params: {
-                    app_id: APPID
+                    //app_id: APPID
                 },
                 isArray: false
             },
@@ -135,7 +136,7 @@ serviceModule.factory('oauth', ['$resource', 'utils', 'APPID', 'BASE_URL',"$time
     }
 ]);
 
-serviceModule.factory('services',['$resource', 'BASE_URL', 'oauth',
+serviceModule.factory('services', ['$resource', 'BASE_URL', 'oauth',
     function($resource, BASE_URL, oauth){
         let middleParams = angular.copy(oauth.requestParamsHeaders);
         return {
@@ -149,6 +150,11 @@ serviceModule.factory('services',['$resource', 'BASE_URL', 'oauth',
                 }),
                 post: angular.extend(middleParams, {
                     method: 'post'
+                })
+            }),
+            posts:$resource(`${BASE_URL}/api/posts`,{}, {
+                query: angular.extend(middleParams, {
+                    method: 'get'
                 })
             }),
             users:$resource(`${BASE_URL}/api/user/:id`, {}, {

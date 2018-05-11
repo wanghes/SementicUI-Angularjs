@@ -7,7 +7,6 @@ export default function(){
             model: "="
         },
         link:function(scope,elem,attrs){
-
             let info = scope.$eval(attrs['text']);
             let text = scope.model[info.field];
             let title = info.title;
@@ -24,13 +23,11 @@ export default function(){
                 }
             },true);
 
-             $(elem).popup({
+            $(elem).popup({
                 title   : title,
                 content : scope.showedMessage,
                 transition: 'vertical flip'
             });
-
-
         }
     }
 }

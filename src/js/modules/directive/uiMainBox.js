@@ -2,7 +2,9 @@ export default function($timeout){
     return {
         restrict: 'E',
         scope:{
-            selectedId:'@'
+            selectedId:'@',
+            noTable:"@",
+            selfStyle:"@"
         },
         replace:true,
         template:"<div ng-transclude></div>",
@@ -12,10 +14,22 @@ export default function($timeout){
                 buttonGroup = $(elem).find('#buttonGroup'),
                 dataTable = $(elem).find('#dataTable'),
                 tableDetail = $(elem).find('#tableDetail'),
+                tableIntro = $(elem).find('#tableIntro'),
                 buttonGroupHeight,
+                tableIntroHeight =0,
                 topSearchHeight,
                 grid,tableHeight,
                 topHeight;
+
+            if(scope.noTable){ //若果是不代表格直接显示磨人的内容
+                $(elem).css({"padding":"65px 15px 15px"})
+                return;
+            }    
+
+            if(scope.selfStyle){
+                $(elem).css({"padding":"50px 15px 15px","overflow":"auto"});
+                return;
+            }
 
             topSearchHeight = topSearch.outerHeight();
             $timeout(function(){
@@ -25,13 +39,22 @@ export default function($timeout){
                     topSearch.addClass('noPadding');
                     if(buttonGroup) buttonGroup.remove();
                     buttonGroupHeight = 0;
+
                 }
+                
+                if(tableIntro){
+                    tableIntroHeight = tableIntro.outerHeight();
+                }
+               
+                
 
                 grid = dataTable.find('#grid');
-                topHeight = topSearchHeight+buttonGroupHeight; //这个是顶部搜索的高度和按钮组的高度之和
+                topHeight = topSearchHeight+buttonGroupHeight+tableIntroHeight; //这个是顶部搜索的高度和按钮组的高度之和
               
                 tableHeight = $(elem).height() - topHeight; //设置表格占据的高度
+
                 dataTable.find('#grid').height(tableHeight);
+                
                 dataTable.height(tableHeight);
                 $(window).on('resize',function(){
                     let newHeight = $(elem).height()-topHeight;

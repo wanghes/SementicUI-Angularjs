@@ -2,3 +2,5 @@ node_modules
 www
 .idea
 npm-debug.log
+.vscode
+apiServer/node_modules

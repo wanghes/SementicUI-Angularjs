@@ -4,9 +4,9 @@
   "description": "backendSystem",
   "main": "main.js",
   "scripts": {
-    "test": "gulp",
+    "start": "gulp",
     "build": "gulp build",
-    "create":"supervisor generate.js"
+    "create": "supervisor generate.js"
   },
   "repository": {
     "type": "git",
@@ -18,7 +18,8 @@
     "angular": "1.5.8",
     "angular-cookies": "1.5.8",
     "angular-resource": "1.5.8",
-    "angular-ui-grid": "3.2.6"
+    "angular-ui-grid": "3.2.6",
+    "mockjs": "^1.0.1-beta3"
   },
   "devDependencies": {
     "babelify": "^7.3.0",

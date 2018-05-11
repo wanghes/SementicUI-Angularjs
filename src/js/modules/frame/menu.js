@@ -36,12 +36,13 @@ export default function init(){
 
         function secondFunc(value,icon,name){
             let menuFirstHtml=``, status;
+
             menuFirstHtml += `<section class="menu-section">`;
             //menuFirstHtml += `<h3 class="menu-section-title"><i class="${icon} icon"></i>${name}</h3>`;
             value.forEach(function(second,index2){
                 status = judgePrevItem(value,index2,value.length);
                 if(!second.content){
-                    menuFirstHtml += status.first ?`<ul class="menu-section-list">`:``;
+                    menuFirstHtml += status.first ?`<ul class="menu-section-list" id="${second.id}">`:``;
                     menuFirstHtml += `<li>
                                         <a href="javascript:;" data-id="${second.id}"
                                         data-url="${second.url}">
@@ -50,7 +51,7 @@ export default function init(){
                     menuFirstHtml += status.last ? `</ul>` : ``;
                 }else{
                     second.content.forEach(function(third,index3){
-                        menuFirstHtml +=  index3==0 ? `<section class="menu_second">
+                        menuFirstHtml +=  index3==0 ? `<section class="menu_second" id="${second.id}">
                                                 <h3 class="menu-section-title"><i class="${second.icon} icon"></i>${second.firstTitle}</h3>
                                                 <ul class="menu-section-list">` : ``;
                         menuFirstHtml += `<li>
@@ -72,7 +73,7 @@ export default function init(){
         /***设置宽侧边栏导航****/
         menuFirstHtml =`<div class="logo">
                         <header class="menu-header">
-                        <span class="menu-header-title">销售跟踪系统</span>
+                        <span class="menu-header-title">后台管理系统</span>
                         </header>
                         </div>`;
         menu.forEach(function(value,index){
@@ -93,7 +94,7 @@ export default function init(){
         menu.forEach(function(value,index){
             value.forEach(function(second,index2){
                 if(second.content){
-                    menuSecondHtml += `<li>
+                    menuSecondHtml += `<li id="${second.id}2">
                                         <a href="javascript:;" data-inverted="" data-position="right center"
                                         data-tooltip="${second.firstTitle}">
                                         <i class="${second.icon} icon"></i>

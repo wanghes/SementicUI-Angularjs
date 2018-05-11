@@ -1,22 +1,41 @@
 export default function($timeout,pNotify,services){
     return {
         restrict:'E',
-        template:`<div style="display:flex;" class="area_check">
-                    <select class="ui dropdown province_node" name="province" ng-model="province" ng-change="selectProvince(province)">
-                        <option value="" disabled selected>请选择省份</option>
-                        <option ng-repeat="province in provinces" value="{{province}}">{{province.name}}</option>
-                    <select>
-                    <select  ng-if="level>=2" class="ui dropdown city_node" name="city" ng-model="city" ng-change="selectCity(city)">
-                        <option value="" disabled selected>请选择城市</option>
-                        <option ng-repeat="thisCity in citys"  value="{{'{*name*:*'+thisCity.name+'*,*code*:*'+thisCity.code+'*}'}}">{{thisCity.name}}</option>
-                    <select>
-                    <select  ng-if="level==3" class="ui dropdown area_node" name="area" ng-model="area" ng-change="selectArea(area)">
-                        <option value="" disabled selected>请选择区县</option>
-                        <option ng-repeat="thisArea in areas"  value="{{'{*name*:*'+thisArea.name+'*,*code*:*'+thisArea.code+'*}'}}">{{thisArea.name}}</option>
-                    <select>
-                </div>`,
+        template:`
+        <div style="display:flex;" class="area_check">
+            <select
+                ng-model="province"
+                class="ui dropdown province_node"
+                name="province"
+                ng-change="selectProvince(province)"
+                ng-options="provinceItem as provinceItem.name for provinceItem in provinces"
+            >
+                <option value="" disabled selected>{{ province ? province.name : "请选择省份" }}</option>
+            </select>
+            <select
+                ng-if="level>=2"
+                ng-model="city"
+                class="ui dropdown city_node"
+                name="city"
+                ng-change="selectCity(city)"
+                ng-options="cityItem as cityItem.name for cityItem in citys"
+            >
+                <option value="" disabled selected>{{ city ? city.name : "请选择城市" }}</option>
+            </select>
+            <select
+                ng-if="level==3"
+                ng-model="area"
+                class="ui dropdown area_node"
+                name="area"
+                ng-change="selectArea(area)"
+                ng-options="areaItem as areaItem.name for areaItem in areas"
+            >
+                <option value="" disabled selected>{{ area ? area.name : "请选择区县" }}</option>
+            </select>
+        </div>
+        `,
         scope:{
-            selectedProvince:"="
+            selected:"="
         },
         controller:function($scope){
             $scope.$on('clearCitys',function($event,wrapID){
@@ -27,100 +46,150 @@ export default function($timeout,pNotify,services){
                     $('#'+wrapID+' .area_check .province_node').val('').trigger('change');
                     $('#'+wrapID+' .area_check .city_node').val('').trigger('change');
                     $('#'+wrapID+' .area_check .area_node').val('').trigger('change');
-                })   
+                })
             }
         },
         link:function(scope,elem,attrs,ctrl){
-            scope.level = attrs['level'];
             scope.provinces = [];
             scope.citys = [];
-            scope.city = '';
             scope.areas = [];
-            scope.area = '';
-            //添加省份的信息到遍历的ng-repeat列表中[一边情况下单选省份的需求会多一些]
+            scope.level = attrs['level'];
+
+            scope.$watch("selected",function(newVal, oldVal){
+                if(!scope.selected){
+                    scope.province = "";
+                    scope.city = '';
+                    scope.area = '';
+                }else{
+
+                    let province = services.city.filter((item) => {
+                        return item.code == scope.selected[0].code
+                    });
+
+                    let temp_province = province.pop(), temp_city, temp_area;
+                    scope.province = temp_province;
+
+                    if(scope.selected.length == 1) return;
+
+                    if(scope.level >= 2){
+                        let { sub } = temp_province;
+                        let city = sub.filter((item) => {
+                            return item.code == scope.selected[1].code
+                        });
+                        temp_city = city.pop();
+                        scope.city = temp_city;
+                        scope.citys = sub;
+                    }
+
+                    if(scope.selected.length == 2) return;
+
+                    if(scope.level == 3){
+                        let { sub } = temp_city;
+
+                        let area = sub.filter((item) => {
+                            return item.code == scope.selected[2].code
+                        });
+                        temp_area = area.pop();
+                        scope.area = temp_area
+                        scope.areas = sub;
+                    }
+                }
+            })
+
+
+            //添加省份的信息到遍历的ng-repeat列表中[一般情况下单选省份的需求会多一些]
             angular.forEach(services.city,function(item){
-                scope.provinces.push({name:item.name,code:item.code});
+                let {name,code,sub} = item;
+                scope.provinces.push({name,code,sub});
             });
 
             scope.selectProvince = function(province){
-                if(!province){ 
+                if(!province){
                     return;
                 }
-                scope.selectedProvince = `[${province}]`;
+
+                let { name, code, sub } = province;
+                let province_stick  =  {
+                    name,
+                    code
+                };
+
+                scope.province = province_stick;
+
+                scope.selected = [{
+                    name,
+                    code
+                }];
+
                 scope.area = '';
                 scope.city = '';
                 scope.areas = [];
                 scope.citys = [];
-                if(!!province && scope.level>=2){
-                    scope.showCitys(province);
+                if(!!province && scope.level >= 2){
+                    scope.showCitys(sub);
                 }
             };
 
-            scope.showCitys = function(province){    
-                let provinceCode = scope.$eval(province).code; 
-                angular.forEach(services.city, function(item) {
-                    if (item.code == provinceCode) {
-                        scope.citys = item.sub
-                    }
-                })
+            scope.showCitys = function(cities) {
+                scope.citys = cities;
             };
 
-            scope.selectCity = function(city){
-                if(!scope.selectedProvince.length) return;   
-                let generArr = scope.selectedProvince ? JSON.parse(scope.selectedProvince) :[];
+            scope.selectCity = function(city) {
+                if(!city) return;
+                if(scope.selected && !scope.selected.length) return;
+
+                let { name, code, sub } = city;
+
+                let city_stick = {
+                    name,
+                    code
+                }
+                scope.city = city_stick;
                 scope.area = '';
                 scope.areas = [];
-                if(!!city && scope.level==3){
-                    city = city.replace(/\*/g,'"');
-                    scope.city = city;
-                    let jsonCity = angular.fromJson(city);
-                    if(generArr.length==3){
-                        generArr = [generArr[0]];
-                        generArr.push(jsonCity);
-                    }else if(generArr.length==2){
-                        generArr.pop();
-                        generArr[1] = jsonCity;
-                    }else{
-                        generArr.length = 2;
-                        generArr[1] = jsonCity;
+
+                let selected_length = scope.selected.length;
+                if(!!city){
+                    if(scope.level==3) {
+                        if( selected_length == 3 ){
+                            scope.selected.splice(1,2,city_stick);
+                        }else if( selected_length == 2 ){
+                            scope.selected.splice(1,1,city_stick);
+                        }else{
+                            scope.selected.push(city_stick);
+                        }
+                        scope.showAreas(sub);
+                    }else if(scope.level==2){
+                        if(selected_length>=2){
+                            scope.selected.splice(1,1,city_stick);
+                        }else{
+                            scope.selected.push(city_stick);
+                        }
                     }
-                    let json = angular.toJson(generArr);
-                    scope.selectedProvince = json;
-                    scope.showAreas(city);
                 }
             };
 
-            scope.showAreas = function(city){
-                let cityCode = scope.$eval(city).code; 
-                if(!scope.citys) return;
-                angular.forEach(scope.citys, function(item) {
-                    if (item.code == cityCode) {
-                        scope.areas = item.sub
-                    }
-                })
+            scope.showAreas = function(areas){
+                scope.areas = areas
+
             };
 
             scope.selectArea = function(area){
-                if(!scope.selectedProvince.length) return;   
-                let generArr = scope.selectedProvince ? JSON.parse(scope.selectedProvince):[];
-                if(!!area){
-                    area = area.replace(/\*/g,'"');
-                    scope.area = area;
-                    let jsonArea = angular.fromJson(area);
-                    if(generArr.length==3){
-                        generArr.pop();
-                        generArr.push(jsonArea);
-                    }else if(generArr.length==2){
-                        generArr.length = 3;
-                        generArr[2] = jsonArea;
-                    }
-                
-                    let json = angular.toJson(generArr);
-                    scope.selectedProvince = json;
-                   // console.log(scope.selectedProvince);
-                } 
-            }
+                if(!area) return;
+                if(!scope.selected.length) return;
 
+                let selected_length = scope.selected.length;
+                let { name,code } = area;
+                let area_stick = { name,code }
+                scope.area = area_stick;
+                if(!!area){
+                    if(selected_length==3){
+                        scope.selected.splice(2,1,area_stick)
+                    }else if(selected_length==2){
+                        scope.selected.push(area_stick)
+                    }
+                }
+            }
 
         }
     }
