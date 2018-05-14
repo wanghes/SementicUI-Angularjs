@@ -23,20 +23,7 @@ export default function() {
     function homeCtrl($scope, pNotify, tableFactory, tableModal, $timeout, BASE_URL, services , utils) {
         $scope.searchData = {};
         $scope.isRefresh = false;
-        //初始化查询结果
-        function setInitDate(day) {
-            let start, end, startTime, endTime;
-            end = new Date().getTime();
-            start = end - 3600 * 24 * day * 1000;
-            startTime = new Date(start);
-            startTime = startTime.getFullYear() + '-' + ('00' + (startTime.getMonth() + 1)).slice(-2) + '-' + ('00' + (startTime.getDate() + 1)).slice(-2);
-            endTime = new Date(end);
-            endTime = endTime.getFullYear() + '-' + ('00' + (endTime.getMonth() + 1)).slice(-2) + '-' + ('00' + (endTime.getDate() + 1)).slice(-2);
-            $scope.searchData.start_time = startTime;
-            $scope.searchData.end_time = endTime;
-        }
-        //90天之内的数据
-        setInitDate(90);
+
         $scope.searchKeys = {
             fields: {
                 timeArea: {
@@ -75,10 +62,6 @@ export default function() {
             }
         };
 
-        services.posts.query({}, (data) => {
-            console.log(data);
-        })
-
         let columnDefs = [{
             field: "title",
             displayName: "标题",
@@ -91,6 +74,25 @@ export default function() {
             enableSorting: true,
             allowCellFocus: false,
             width: 150
+        }, {
+            field: "sex",
+            displayName: "性别",
+            enableSorting: true,
+            allowCellFocus: false,
+            width: 50
+        }, {
+            field: "area",
+            displayName: "所在地址",
+            enableSorting: true,
+            allowCellFocus: false,
+            width: 250
+        },{
+            field: "status",
+            displayName: "当前状态",
+            enableSorting: false,
+            allowCellFocus: false,
+            width: 100,
+            cellTemplate:`<span style="position: relative;top: 3px;" ng-bind-html="row.entity.status_label"></span>`
         }, {
             field: "date",
             displayName: "发布日期",
@@ -109,11 +111,29 @@ export default function() {
             multiSelect: true,
             enableGridMenu: true,
             getPage: getData,
+            allowMenuReset:true,
             item: "item",
             allowMenuReset:true,
             menuReset:'homeColumns'
         });
-
+        function generateChangeInfo (data){
+            return data.map(function(item){
+                switch(item.status){
+                    case 1:
+                    item["status_label"] = `<a class="ui orange label tiny">已经提交</a>`;
+                    break;
+                    case 2:
+                    item["status_label"] = `<a class="ui green label tiny">已经完成</a>`;
+                    break;
+                    case 3:
+                    item["status_label"] = `<a class="ui blue label tiny">等待回复</a>`;
+                    break;
+                    case 4:
+                    item["status_label"] = `<a class="ui red label tiny">已经驳回</a>`;
+                }
+                return item;
+            });
+        }
 
         function getData() {
             let data = angular.copy($scope.searchData);
@@ -123,7 +143,7 @@ export default function() {
             services.posts.query(data,(data) => {
                 $scope.$broadcast('hideloading');
                 $scope.gridOptions.totalItems = 50;
-                let newData = data.data.articles;
+                let newData = generateChangeInfo(data.data.articles);
                 $scope.gridOptions.data = newData;
                 $scope.gridLoading = false;
                 $scope.initTableData();
@@ -134,9 +154,6 @@ export default function() {
                 }
             });
         }
-
-        getData();
-
 
 
         $scope.operateButton = [{

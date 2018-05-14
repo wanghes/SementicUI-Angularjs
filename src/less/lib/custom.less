@@ -6,6 +6,9 @@ body {
 
 body.iframeBody {
     background: #fff;
+    &.no_main_box{
+        padding-top: 50px;
+    }
 }
 
 [ng\:cloak],
@@ -37,6 +40,16 @@ ng\:form {
     box-sizing: border-box;
     width: 100%;
     padding-left: 0;
+    padding-top: 50px;
+}
+
+.table_intro {
+    box-sizing: border-box;
+    width: 100%;
+    background: #fafafa;
+    border-top:1px solid #ccc;
+    height: 40px;
+    padding: 8px 0;
 }
 
 .button_group {
@@ -49,6 +62,7 @@ ng\:form {
         margin-left: 8px;
     }
 }
+
 
 .table_detail {
     width: 100%;
@@ -63,6 +77,45 @@ ng\:form {
     .top_shadow {
         height: 10px;
         width: 100%;
+    }
+}
+
+
+.data_loading_wrap{
+    position: fixed;
+    height:100%;
+    width:100%;
+    z-index:1001;
+    background: rgba(255 ,255 ,255,.8);
+    top:0;
+}
+.data_loading{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin: 0px;
+    text-align: center;
+    z-index: 1000;
+    -webkit-transform: translateX(-50%) translateY(-50%);
+    -ms-transform: translateX(-50%) translateY(-50%);
+    transform: translateX(-50%) translateY(-50%);
+    width:180px;
+    height: 60px;
+    line-height: 40px;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 0 8px rgba(0,0,0,0.3);
+    p{
+        display: inline-block;
+        position: relative;
+           top: -24px;
+        left: 20px;
+    }
+    .ui.loader.active{
+        position: relative;
+        left:30px;
+        top:13px;
+            transform: translateX(0%) translateY(0%);
     }
 }
 
@@ -256,6 +309,16 @@ ng\:form {
         display: flex;
     }
 }
+.area_check{
+    .ui{
+        &.dropdown{
+            margin-right: 15px;
+            &:last-child{
+                margin-right: 0;
+            }
+        }
+    }
+}
 
 .custom_sidebar {
     width: 100%;
@@ -277,12 +340,13 @@ ng\:form {
         .form_item {
             padding-right: 15px;
             box-sizing: border-box;
-            .area_check {
-                select {
-                    margin-right: 15px;
-                    &:last-child {
-                        margin-right: 0;
-                    }
+
+        }
+        .area_check {
+            select {
+                margin-left: 15px;
+                &:first-child {
+                    margin-left: 0;
                 }
             }
         }
@@ -367,6 +431,14 @@ ng\:form {
             display: flex;
             justify-content: flex-end;
         }
+    }
+}
+
+#gridDetails .ui-grid-render-container{
+    height:100%;
+    overflow: hidden;
+    .ui-grid-viewport{
+        height:100%;
     }
 }
 
@@ -514,5 +586,16 @@ select.province_node option {
     display: none;
     .ui-pnotify {
         position: static;
+    }
+}
+
+.table_font_color{
+    display: block;
+    padding-top: 5px;
+    &.table_green{
+        color:green;
+    }
+    &.table_red{
+        color:red;
     }
 }

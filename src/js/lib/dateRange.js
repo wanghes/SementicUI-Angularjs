@@ -1212,11 +1212,11 @@
             // 如果是最后一个月的日期，则加上下一个月的链接
             if(!this.mOpts.magicSelect){
                 if(0 == index) {
-                    $(td).append('<a href="javascript:void(0);" id="' + this.nextMonth + '"><i class="i_next"></i></a>');
+                    $(td).append('<a href="javascript:void(0);" id="' + this.nextMonth + '"><i class="i_next angle right icon"></i></a>');
                 }
                 // 如果是第一个月的日期，则加上上一个月的链接
                 if(index + 1 == this.mOpts.calendars) {
-                    $(td).append('<a href="javascript:void(0);" id="' + this.preMonth + '"><i class="i_pre"></i></a>');
+                    $(td).append('<a href="javascript:void(0);" id="' + this.preMonth + '"><i class="i_pre angle left icon"></i></a>');
                 }
             }
 

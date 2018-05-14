@@ -37,7 +37,7 @@ tableModule.factory('tableFactory',
                 }, 1000, 1);
                 return deferred.promise;
             }
-  
+
             //是否启用水平滚动条
             var ifEnableHorizontalScrollbar;
             switch(config.enableHorizontalScrollbar){
@@ -63,7 +63,7 @@ tableModule.factory('tableFactory',
                       })
                       return arr[0]
                    })
-                   
+
                    columnDefs = colDefs;
                 }
             }
@@ -221,7 +221,7 @@ tableModule.factory('tableFactory',
                    // scope.gridApi.core.notifyDataChange(uiGridConstants.dataChange.OPTIONS);
 
                     //点击全选反选批量处理结果集
-                    gridApi.selection.on.rowSelectionChangedBatch(scope, function(row){ 
+                    gridApi.selection.on.rowSelectionChangedBatch(scope, function(row){
                         if(config.selectedItems){
                             scope[config.selectedItems] = gridApi.selection.getSelectedRows().length; //获取选中行的总行数
                         }else{

@@ -1,5 +1,4 @@
 /* 清理浮动 */
-
 .clearfix:after {
     visibility: hidden;
     display: block;
@@ -16,7 +15,6 @@
 #menu_bar {
     height: 50px;
     background: #292929;
-    // position: fixed;
     position: absolute;
     width: 100%;
     top: 0;
@@ -34,7 +32,7 @@
     top: 0;
     right: 0;
     bottom: 0;
-   overflow: hidden;
+    overflow: hidden;
 }
 
 .frame {
@@ -48,11 +46,10 @@
 body.iframeBody {
     overflow: hidden;
     box-sizing: border-box;
-    padding-top: 50px;
 }
 
 #tab_menu_wrap {
-    margin: 0 150px 0 100px;
+    margin: 0 100px 0 100px;
     position: relative;
     height: 50px;
     overflow: hidden;
@@ -84,12 +81,12 @@ body.iframeBody {
     color: #ccc;
     float: left;
     &:hover {
-        background-color: rgba(99, 87, 163, .7);
+        background-color: #196082;
     }
 }
 
 #tab_menu .tab_list li.current {
-    background: #6357A3;
+    background: #196082;
     color: white;
 }
 
@@ -134,8 +131,8 @@ body.iframeBody {
 
 .slide_right {
     top: 0;
-    right: 100px;
-     border-left: 1px solid #444;
+    right: 50px;
+    border-left: 1px solid #444;
 }
 
 
@@ -155,6 +152,7 @@ body.iframeBody {
 }
 
 .slide_right_right{
+    display: none;
   top: 0;
   right: 50px;
   border-left: 1px solid #444;

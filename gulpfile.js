@@ -17,9 +17,8 @@ var browserSync = require('browser-sync').create();
 var mainBundler = null;
 var ngmin = require('gulp-ngmin');
 
-
-//设置库的存放目录
-gulp.task('lib',function(){
+//设置公用库的存放目录
+gulp.task('lib', function(){
     gulp.src([
         './src/js/lib/jquery-1.9.1.min.js',
         './src/js/lib/angular.min.js',
@@ -30,42 +29,24 @@ gulp.task('lib',function(){
         './src/js/lib/pnotify.js',
         './src/js/lib/dateRange.js',
         './src/js/lib/jquery.ztree.all.min.js'
-    ], { base:'src' })
-        .pipe(concat('lib.js'))
-        .pipe(uglify())
-        .pipe(gulp.dest('./www/js/lib'));
+    ], {base: 'src'})
+    .pipe(concat('lib.js'))
+    .pipe(uglify())
+    .pipe(gulp.dest('./www/js/lib'));
 });
 
 //设置开发环境html模块的生成路径
 gulp.task('htmlDev',function(){
-    gulp.src(['./src/modules/**/**','./src/*.html'],{base:'src'})
-        .pipe(gulp.dest('./www/'))
-        .pipe(browserSync.reload({stream: true}));
+    gulp.src([
+        './src/modules/**/**',
+        './src/*.html'
+    ], {base: 'src'})
+    .pipe(gulp.dest('./www/'));
 });
-
-//生产环境直接为www/modules 和www的'.html'文件添加manifest 文件缓存
-gulp.task('htmlPro',function(){
-    gulp.src('./src/modules/*.html', { base: 'src' })
-        .pipe(tap(function(file, t) {
-            var contents = file.contents.toString();
-            contents = contents.replace(/\<html\s*(ng-app=\".*\")?\s*\>/,'<html $1 manifest="../index.manifest">');
-            file.contents = new Buffer(contents);
-        }))
-        .pipe(gulp.dest('./www/'));
-    gulp.src('./src/*.html', { base: 'src' })
-        .pipe(tap(function(file, t) {
-            var contents = file.contents.toString();
-            contents = contents.replace(/\<html\s*(ng-app=\".*\")?\s*\>/,'<html $1 manifest="index.manifest">');
-            file.contents = new Buffer(contents);
-        }))
-        .pipe(gulp.dest('./www/'));
-});
-
 
 //设置fonts字体的生成路径
 gulp.task('fonts',function(){
-    gulp.src('./src/fonts/**', { base: 'src' })
-        .pipe(gulp.dest('./www/'));
+    gulp.src('./src/fonts/**', { base: 'src' }).pipe(gulp.dest('./www/'));
 });
 
 //设置框架级别的相关js
@@ -127,12 +108,37 @@ gulp.task('mainJsPro',function(){
 gulp.task('css',function(){
     gulp.src('./src/less/backend.less') //多个文件以数组形式传入
         .pipe(less())
-        .pipe(gulp.dest('./www/css'))
-        .pipe(browserSync.reload({stream: true}));
+        .pipe(gulp.dest('./www/css'));
 });
 
 gulp.task('images',function(){
     gulp.src('./src/images/**',{ base:'src' }) //多个文件以数组形式传入
+        .pipe(gulp.dest('./www/'));
+});
+
+
+// 用来重启browserSync.reload
+gulp.task('reloadBrowser', function (){
+    gulp.src('./www/index.manifest')
+        .pipe(gulp.dest('./www'))
+        .pipe(browserSync.reload({stream: true}));
+});
+
+//生产环境直接为www/modules 和www的'.html'文件添加manifest 文件缓存
+gulp.task('htmlPro',function(){
+    gulp.src('./src/modules/*.html', { base: 'src' })
+        .pipe(tap(function(file, t) {
+            var contents = file.contents.toString();
+            contents = contents.replace(/\<html\s*(ng-app=\".*\")?\s*\>/,'<html $1 manifest="../index.manifest">');
+            file.contents = new Buffer(contents);
+        }))
+        .pipe(gulp.dest('./www/'));
+    gulp.src('./src/*.html', { base: 'src' })
+        .pipe(tap(function(file, t) {
+            var contents = file.contents.toString();
+            contents = contents.replace(/\<html\s*(ng-app=\".*\")?\s*\>/,'<html $1 manifest="index.manifest">');
+            file.contents = new Buffer(contents);
+        }))
         .pipe(gulp.dest('./www/'));
 });
 
@@ -148,31 +154,22 @@ gulp.task('manifest', function (){
         .pipe(gulp.dest('./www'))
         .pipe(browserSync.reload({stream: true}));
 });
-
-gulp.task('nomanifest', function (){
-    gulp.src('./www/index.manifest')
-        .pipe(gulp.dest('./www'))
-        .pipe(browserSync.reload({stream: true}));
-});
-
 //watch 模块的变化 watch源 无需加入相对路径 ‘./’符号，否则不能监听到新建的文件变化
 gulp.task('watch', function(){
-    gulp.watch(['./src/modules/**/**','./src/*.html'],function(){
-        runSequence('htmlDev', function(){});
+    gulp.watch(['./src/modules/**/*.html','./src/*.html'],function(){
+        runSequence('htmlDev', 'reloadBrowser', function(){});
     });
     gulp.watch('./src/less/**/*.less', function(){
-        runSequence('css', function(){});
+        runSequence('css', 'reloadBrowser', function(){});
     });
     gulp.watch('./src/images/**', function(){
-        runSequence('images', 'nomanifest', function(){});
+        runSequence('images', 'reloadBrowser', function(){});
     });
     gulp.watch(['./src/js/**/**/**/**', '!src/js/modules/frame/**', '!src/js/frameWrap.js'],function(event){
-        // debug模式可以开启这个watch，平常考虑到速度问题，先暂时注释
-        // watch();
-        runSequence('mainJs','htmlDev', function(){});
+        runSequence('mainJs', 'reloadBrowser', function(){});
     });
     gulp.watch(['./src/js/modules/frame/**', 'src/js/frameWrap.js'], function(){
-        runSequence('frameWrapJs', function(){});
+        runSequence('frameWrapJs', 'reloadBrowser', function(){});
     });
 });
 
