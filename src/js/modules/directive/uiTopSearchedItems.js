@@ -14,7 +14,7 @@ export default function($timeout) {
         replace: true,
 
         controller:function($scope){
-             //console.log($scope) 
+             //console.log($scope)
         },
         link: function(scope, elem, attrs, topSearchCtrl) {
             let labellist = []; //搜索项标签字典
@@ -33,11 +33,11 @@ export default function($timeout) {
                 scope.labellist.push(label);
             }
 
-            $timeout(()=>{
+            $timeout(() =>{
                 //创建显示搜索项的labels
                 scope.$watch('searchKeys', function(newVal, oldVal) {
-                    if(oldVal==newVal) {
-                        scope.$parent.searchKeys.operateFunction();
+                    if(oldVal == newVal) {
+                        // scope.$parent.searchKeys.operateFunction();
                         return;
                     }
                     scope.labellist = [];
@@ -59,14 +59,14 @@ export default function($timeout) {
                         return;
                     }
 
-                    let addble=false, html,keyWord,valInfo;
+                    let addble = false, html, keyWord, valInfo;
                     for (keyWord in fields) {
                         addble=false
                         //text用来显示labels
                         if(fields[keyWord].text) {
                             valInfo = fields[keyWord].text;
                             addble=true;
-                        }  
+                        }
                         if(fields[keyWord].type=="area" && fields[keyWord].value ){ //若果是地区选择器的话是city.name
                             addble=true;
                             if(fields[keyWord].level==1){
@@ -80,9 +80,9 @@ export default function($timeout) {
                                 angular.forEach(areaList,function(item){
                                     valInfo += item.name+'-';
                                 });
-                                valInfo =  valInfo.substring(0, valInfo.length - 1);   
-                            }  
-                        } 
+                                valInfo =  valInfo.substring(0, valInfo.length - 1);
+                            }
+                        }
                         if(addble){
                             scope.outputLabel({
                                 keyWord:keyWord,
@@ -90,10 +90,10 @@ export default function($timeout) {
                                 valInfo:valInfo,
                                 type:fields[keyWord].type
                             });
-                            
-                        }  
+
+                        }
                     }
-                   
+
                     html = scope.labellist.join('');
                     $('#searchList').html(html);
                     scope.resetScrollBar();
@@ -114,7 +114,7 @@ export default function($timeout) {
                         autoExpandScrollbar: false,
                         advanced: { autoExpandHorizontalScroll: true }
                     });
-                    $(view).mCustomScrollbar("scrollTo","left"); 
+                    $(view).mCustomScrollbar("scrollTo","left");
                 }else{
                     $(view).mCustomScrollbar("destroy");
                 }

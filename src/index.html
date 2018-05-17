@@ -44,11 +44,15 @@
         </div>
     </div>
     <div id="frame_container">
+
         <iframe src="./modules/dashboard.html" class="frame" data-id="back_index"></iframe>
+        <div class="ui active inverted dimmer" id="loadingBox" style="z-index:2;">
+            <div class="ui medium text loader">正在导入页面...</div>
+        </div>
     </div>
 </div>
-<div id="messageRecieveBox" class="message_recieve_box" style=""></div>
+<div id="messageRecieveBox" class="message_recieve_box"></div>
 </body>
-<script type="text/javascript" src="js/lib/lib.js"></script>
+<script type="text/javascript" src="js/lib.js"></script>
 <script type="text/javascript" src="js/frameWrap.js"></script>
 </html>

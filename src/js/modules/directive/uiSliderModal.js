@@ -8,93 +8,97 @@ export default function($timeout, pNotify, services, $sce) {
                 <h3 class="ui dividing header"><i class="{{icon}} icon"></i>{{title}}</h3>
                 <div class="insert_wrap">
                     <div id="{{id}}InsertSlider" style="width:100%; height:100%; display:flex;">
-                        <form ng-show="fields.length>0" style="width:{{formWidth}}" id="{{id}}InsertedForm" class="insert_slider ui form clearfix">
-                            <div ng-repeat="field in fields" class="form_item"
-                            style="{{itemStyle}}{{(field.type=='area' && field.level==3 || field.level==2) || field.type=='textarea' ? 'width:100%':itemWidth}}">
-                                <div ng-if="field.type =='input'" class="sixteen wide field slider_io">
-                                    <label>{{field.name}}</label>
-                                    <input type="text"
-                                    name="{{field.field_name}}"
-                                    placeholder="{{field.defaultText}}"
-                                    value="{{field.value}}"
+                        <form
+                        ng-show="!!fields"
+                        style="width:{{formWidth}}"
+                        id="{{id}}InsertedForm"
+                        class="insert_slider ui form clearfix">
+                            <div ng-repeat="(name, field) in fields" class="form_item" style="{{ itemStyle(field) }}">
+                                <div ng-if="field.type == 'input'" class="sixteen wide field slider_io">
+                                    <label>{{ field.label }}</label>
+                                    <input
+                                    type="text"
+                                    name="{{ name }}"
+                                    placeholder="{{ field.defaultText }}"
+                                    value="{{ field.value }}"
                                     ng-model="field.value">
                                 </div>
-                                <div ng-if="field.type=='dropdownOne'" class="sixteen wide field slider_io">
-                                    <label>{{field.name}}</label>
-                                    <div class="ui search selection dropdown" data-func="{{field.defaultFuncName}}">
-                                        <input type="hidden"
-                                        name="{{field.field_name}}"
-                                        value="{{field.value}}" />
+                                <div ng-if="field.type == 'dropdown'" class="sixteen wide field slider_io">
+                                    <label>{{ field.label }}</label>
+                                    <div class="ui search selection dropdown" data-func="{{ field.defaultFuncName }}">
+                                        <input
+                                        type="hidden"
+                                        name="{{ name }}"
+                                        value="{{ field.value }}" />
                                         <i class="dropdown icon"></i>
                                         <div ng-class="{true: 'text', false: 'text default'}[field.text.length>0]">
-                                            {{field.text || field.defaultText}}
+                                            {{ field.text || field.defaultText }}
                                         </div>
                                         <div class="menu">
-                                            <div class="item" ng-repeat="data in field.data" data-value="{{data.value}}">{{data.name}}</div>
+                                            <div class="item"
+                                            ng-repeat="data in field.data"
+                                            data-value="{{ data.value }}">{{ data.name }}</div>
                                         </div>
                                     </div>
                                 </div>
-                                <div ng-if="field.type=='dropdownTwo'" class="sixteen wide field slider_io">
-                                    <label>{{field.name}}</label>
-                                    <div class="ui search selection dropdown multiple" data-func="{{field.defaultFuncName}}">
-                                        <input type="hidden"
-                                        name="{{field.field_name}}"
-                                        value="{{field.value}}" />
+                                <div ng-if="field.type == 'dropdowns'" class="sixteen wide field slider_io">
+                                    <label>{{ field.label }}</label>
+                                    <div class="ui search selection dropdown multiple" data-func="{{ field.defaultFuncName }}">
+                                        <input
+                                        type="hidden"
+                                        name="{{ name }}"
+                                        value="{{ field.value }}" />
                                         <i class="dropdown icon"></i>
-                                        <div class="text default">{{field.text || field.defaultText}}</div>
+                                        <div class="text default">{{ field.text || field.defaultText }}</div>
                                         <div class="menu">
-                                            <div class="item" ng-repeat="data in field.data" data-value="{{data.value}}">{{data.name}}</div>
+                                            <div class="item"
+                                            ng-repeat="data in field.data"
+                                            data-value="{{data.value}}">{{data.name}}</div>
                                         </div>
                                     </div>
                                 </div>
-                                <div ng-if="field.type=='dropdownTree'" class="sixteen wide field slider_io">
-                                    <tree-view item="field"></tree-view>
+                                <div ng-if="field.type == 'tree'" class="sixteen wide field slider_io">
+                                    <tree-view item="field" name="{{ name }}"></tree-view>
                                 </div>
-                                <div ng-if="field.type=='file'" class="sixteen wide field slider_io">
-                                    <label>{{field.name}}</label>
-                                    <div class="ui action input">
-                                        <input type="text"
-                                        name="{{field.field_name}}"
-                                        id="{{field.field_name}}_attachmentName"
-                                        value="{{field.value}}"
-                                        placeholder="{{field.defaultText}}" />
-                                        <label for="{{field.field_name}}" class="ui icon button btn-file">
-                                             <span>选择文件</span><i class="attach icon"></i>
-                                             <input type="file" id="{{field.field_name}}" data-field-name="{{field.field_name}}"
-                                             data-api-service="{{field.apiService}}"
-                                             onchange="angular.element(this).scope().changeFileFunc(this)"
-                                             name="{{field.field_name}}" style="display:none;">
-                                        </label>
-                                    </div>
+                                <div ng-if="field.type == 'file'" class="sixteen wide field slider_io">
+                                    <label>{{ field.label }}</label>
+                                    <ui-file-input
+                                    api-service="{{ field.apiService }}"
+                                    name="{{ name }}"
+                                    value="{{ field.value }}"
+                                    placeholder="{{ field.defaultText }}"
+                                    ng-upload-change="fileChanged($event, name)">
+                                    </ui-file-input>
                                 </div>
-                                <div ng-if="field.type=='textarea'" class="sixteen wide field slider_io">
-                                    <label>{{field.name}}</label>
-                                    <textarea rows="3"
-                                    name="{{field.field_name}}"
+                                <div ng-if="field.type == 'textarea'" class="sixteen wide field slider_io">
+                                    <label>{{ field.label }}</label>
+                                    <textarea
+                                    rows="3"
+                                    name="{{ name }}"
                                     ng-model="field.value"
-                                    placeholder="{{field.defaultText}}">
-                                    {{field.value}}
+                                    placeholder="{{ field.defaultText }}">
+                                    {{ field.value }}
                                     </textarea>
                                 </div>
                                  <div ng-if="field.type=='area'" class="sixteen wide field slider_io">
-                                    <label>{{field.name}}</label>
+                                    <label>{{ field.label }}</label>
                                     <input type="hidden"
-                                    name="{{field.field_name}}"
-                                    value="{{field.value}}" />
-                                    <ui-city selected="field.value" level="{{field.level}}"></ui-city>
+                                    name="{{ name }}"
+                                    value="{{ field.value }}" />
+                                    <ui-city selected="field.value" level="{{ field.level }}"></ui-city>
                                 </div>
                             </div>
                             <div class="insert_slider_buttons">
                                 <button
-                                id="{{sliderButton.id}}"
+                                id="{{ sliderButton.id }}"
                                 ng-repeat="sliderButton in sliderButtons"
-                                class="ui mini {{sliderButton.className}} button"
+                                class="ui button {{ sliderButton.className }}"
                                 ng-click="emitClick(sliderButton.func)">
-                                {{sliderButton.name}}
+                                {{ sliderButton.name }}
                                 </button>
                             </div>
                         </form>
-                        <div id="cludeBox" class="other_html_wrap" ng-transclude></div>
+                        <div id="cludeBox" ng-show="otherShow" class="other_html_wrap" ng-transclude></div>
                     </div>
                 </div>
             </div>
@@ -104,50 +108,47 @@ export default function($timeout, pNotify, services, $sce) {
             sliderInfo: '='
         },
         controller: function($scope, $element) {
+            let self = this;
+
+            $scope.formID = $scope.id + "InsertedForm";
             $scope.sliderButtons = $scope.sliderInfo.sliderButtons;
             $scope.fields = $scope.sliderInfo.fields || '';
             $scope.title = $scope.sliderInfo.title;
             $scope.icon = $scope.sliderInfo.icon;
+            $scope.otherShow = $scope.sliderInfo.otherShow || false;
             $scope.id = $scope.sliderInfo.id;
             $scope.fieldsColumn = $scope.sliderInfo.fieldsColumn || 2;
-            $scope.formID = $scope.id + "InsertedForm";
             $scope.formWidth = $scope.sliderInfo.formWidth || "100%";
             $scope.sidebarStyle = $scope.sliderInfo.sidebarStyle || "";
             $scope.operateFunctions = $scope.sliderInfo.operateFunctions || false;
-            $scope.hasOtherHTML = $scope.sliderInfo.hasOtherHTML || false;
             $scope.templates = []; //非公用设置，需要TODO
             $scope.searchValue = ''; //非公用设置，需要TODO
             $scope.formData = {};
             $scope.otherData = $scope.sliderInfo.otherHtml || {};
             $scope.city = services.city;
-            let self = this;
-            this.childPreview = function() {
-                $scope.formData = $scope.getFormData($scope);
-                $scope.formData.fields = []; //预览的属性
-                return $scope.formData;
-            }
 
-            this.templateCheck = function(cb) {
-                $scope.$watch(function() {
-                    return $scope.searchValue;
-                }, function(result) {
-                    if ($scope.searchValue != '') {
-                        if ($scope.templates.length > 0) {
-                            cb($scope.templates, $scope.searchValue);
-                        }
-                    }
-                });
+            $scope.fileChanged = ($event, name) => {
+                var files = $event.target.files;
+                $scope.fields[name].apiService(files[0]);
             }
         },
         link: function(scope, elem, attrs, ctrl) {
             $timeout(function() {
-                let itemWidth = 'width:'+Math.floor(100 / scope.fieldsColumn)+'%;';
-                scope.itemStyle = `float:left;${itemWidth}`
+                let itemWidth = 'width:' + Math.floor(100 / scope.fieldsColumn)+'%;';
+                scope.itemStyle = (field) => {
+                    if ((field.type == 'area' && field.level == 3 || field.level == 2) || field.type == 'textarea'){
+                        return 'float:left;width:100%;';
+                    }else {
+                        return `float:left; ${itemWidth}`;
+                    }
+                }
+
                 $(`#${scope.id}`).sidebar('setting', {
                     dimPage: true, //显示褐色遮罩
                     transition: 'overlay',
                     scrollLock: true,
-                    closable: false
+                    closable: false,
+                    duration: 300
                 });
 
                 $(`#${scope.id}InsertedForm`).find('.ui.dropdown.search.selection').dropdown({
@@ -181,7 +182,7 @@ export default function($timeout, pNotify, services, $sce) {
 
                     }
                 });
-            }, 0);
+            });
 
             //文件上传
             scope.changeFileFunc = function(self) {
@@ -219,7 +220,7 @@ export default function($timeout, pNotify, services, $sce) {
                     scope.closeRightModal();
                 } else {
                     if (scope.fields.length > 0) {
-                        scope.formData = scope.getFormData(scope);
+                        scope.formData = scope.getFormData();
                     }
                     scope.modalFormSubmitFunc(func);
                 }
@@ -270,7 +271,7 @@ export default function($timeout, pNotify, services, $sce) {
             };
 
             //获取表单数据
-            scope.getFormData = function(scope) {
+            scope.getFormData = function() {
                 let formData = {};
                 if (scope.fields.length > 0) {
                     scope.fields.forEach(function(item, index) {

@@ -56,7 +56,7 @@ export default function($timeout){
                     isSingleDay : false,
                     shortOpr : false,
                     defaultText : ' 至 ',
-                    theme : 'ta',
+                    theme : 'gri',
                     success : function(obj) {
                         scope.model.value = [obj.startDate + " 00:00:00", obj.endDate + " 23:59:59"];
                         $('#'+scope.model.id).val(`${obj.startDate} 至 ${obj.endDate}`);

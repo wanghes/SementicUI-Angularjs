@@ -7,7 +7,7 @@ modalInTableModule.factory('templateLoader', [
     '$q',
     '$rootScope',
     '$templateCache',
-    function($compile, $document, $controller, $http, $q, $rootScope, $templateCache,$timeout) {
+    function($compile, $document, $controller, $http, $q, $rootScope, $templateCache, $timeout) {
         return {
             load: fetchTemplate,
             compile: loadAndCompile

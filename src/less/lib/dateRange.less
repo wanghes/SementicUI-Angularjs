@@ -84,14 +84,12 @@
   position: absolute;
   z-index: 100;
 }
-// .i_pre,
-// .i_next,
+.i_pre,
+.i_next,
 .ta_calendar td.ta_dateRangeSelected,
 .ta_calendar td.first,
 .ta_calendar td.last,
 .ta_calendar td.today {
-  /*background:url(http://imgcache.qq.com/bossweb/mta/images/calendar_all.png) no-repeat;*/
-  background: url("../images/calendar_all.png") no-repeat;
   cursor: pointer;
 }
 .i_pre,
@@ -102,8 +100,7 @@
   transition: all .3s linear;
 }
 i.icon.i_pre {
-  // background-position: 0 0;
-   background: #ccc;
+    background: #ccc;
     border-radius: 50%;
     height: 24px;
     width: 24px;
@@ -116,7 +113,6 @@ i.icon.i_pre:before {
     left: -1px;
 }
 i.icon.i_pre:hover {
-  // background-position: -46px 0px;
   background: #2185D0;
 }
 i.icon.i_next {
@@ -127,18 +123,16 @@ i.icon.i_next {
     color: #fff;
     line-height: 24px;
     font-size: 16px;
-  // background-position: -23px 0;
 }
 i.icon.i_next:hover {
     background: #2185D0;
- // background-position: -69px 0px;
 }
 i.icon.i_next:before {
     position: relative;
     left: 1px;
 }
 .ta_calendar td.ta_dateRangeSelected {
-  background: #0067bb;
+  background: #5375b9;
   color: #fff;
 }
 .ta_calendar td.ta_dateRangeGray {
@@ -159,7 +153,7 @@ i.icon.i_next:before {
 }
 .ta_calendar td.today {
     color: #fff;
-    background: #0067bb;
+    background: #5375b9;
     border-radius: 100%;
 }
 .ta_calendar .dis {
@@ -181,20 +175,19 @@ i.icon.i_next:before {
 }
 .ta_calendar table thead tr {
   border: 1px solid #e1e1e1;
-  background: #f7f8fa;
+  background: #718bc1;
   -webkit-box-shadow: inset 0px 1px 0 #ffffff;
   -moz-box-shadow: inset 0px 1px 0 #ffffff;
   box-shadow: inset 0px 1px 0 #ffffff;
   box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.1);
 }
 .ta_calendar table thead th {
-  line-height: 20px;
-  padding: 4px 10px;
-  color: #444;
-  cursor: pointer;
-  text-align: left;
-  border-top: 1px solid #e1e1e1;
-  border-bottom: 1px solid #e1e1e1;
+    line-height: 20px;
+    padding: 4px 10px;
+    color: #fff;
+    cursor: pointer;
+    text-align: left;
+    border: 1px solid #fcfcff;
 }
 .ta_calendar table.calendar-month {
   font-size: 12px;
@@ -349,7 +342,6 @@ input[type='text'].ta_ipt_text_s {
   background-image: none;
   color: #333333;
   text-decoration: none;
-  transition: background-position 0.1s linear 0s;
 }
 .ta_btn:focus {
   outline: thin dotted #333333;
@@ -372,9 +364,7 @@ input[type='text'].ta_ipt_text_s {
   margin: 2px 5px 0 0;
   vertical-align: top;
 }
-.ta_btn:hover {
-  background-position: 0 -16px;
-}
+
 .ta_btn_primary {
   background-color: #0067bb;
   background-image: -moz-linear-gradient(center top, #c7e184, #a2cc59);

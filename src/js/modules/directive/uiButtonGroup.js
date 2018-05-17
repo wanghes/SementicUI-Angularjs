@@ -10,8 +10,7 @@ export default function($timeout){
         scope:{
              buttons:'='
         },
-        controller:function($scope,$element){
-
+        controller:function($scope, $element){
             this.openModal = function(action){
                 if(!action){
                     return;
@@ -22,8 +21,9 @@ export default function($timeout){
                             throw new Error('没有定义相应的打开modal的ID!');
                             return;
                         }
+
                        $(action.id).sidebar({
-                            transition:action.transition ? action.transition : 'overlay'
+                            transition:action.transition ? action.transition : 'push'
                        }).sidebar('show');
                     }else if(action.open=='modal'){
                         if(!action.id){
@@ -50,8 +50,6 @@ export default function($timeout){
                 }else if(angular.isFunction(action)){
                     action();
                 }
-
-
             };
         },
         link:function(scope,elem,attrs,ctrl){
@@ -68,7 +66,7 @@ export default function($timeout){
                             }else{
                                 $('#'+item.id).removeAttr('disabled');
                             }
-                        })
+                        });
                     },true);
                 },500);
             }

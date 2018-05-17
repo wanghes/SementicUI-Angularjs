@@ -37,7 +37,8 @@ function addTab(_obj) {
 
     removeCurrentState();
     $('.tab_list').append(_tpl_tab);
-    $('#frame_container').append(_tpl_frame);
+    $('#frame_container').prepend(_tpl_frame);
+    $('#loadingBox').show();
     setTimeout(function(){
         $(_tpl_frame).find('body').addClass('iframeBody1111');
     },3000)

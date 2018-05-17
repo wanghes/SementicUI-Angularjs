@@ -19,11 +19,10 @@ let homeModule = angular.module('homeModule', [
 
 export default function() {
     homeModule.controller("homeCtrl", homeCtrl)
-    homeCtrl.$inject = ['$scope', 'pNotify', 'tableFactory', 'tableModal', '$timeout', 'BASE_URL', 'services', 'utils'];
-    function homeCtrl($scope, pNotify, tableFactory, tableModal, $timeout, BASE_URL, services , utils) {
+    homeCtrl.$inject = ['$scope', 'pNotify', 'tableFactory', 'tableModal', '$timeout', 'BASE_URL', 'services', 'utils', 'confirmTip'];
+    function homeCtrl($scope, pNotify, tableFactory, tableModal, $timeout, BASE_URL, services , utils, confirmTip) {
         $scope.searchData = {};
         $scope.isRefresh = false;
-
         $scope.searchKeys = {
             fields: {
                 timeArea: {
@@ -79,7 +78,7 @@ export default function() {
             displayName: "性别",
             enableSorting: true,
             allowCellFocus: false,
-            width: 50
+            width: 100
         }, {
             field: "area",
             displayName: "所在地址",
@@ -140,7 +139,7 @@ export default function() {
             data.page = $scope.gridOptions.paginationCurrentPage;
             data.per_page = $scope.gridOptions.paginationPageSize;
             $scope.gridLoading = true;
-            services.posts.query(data,(data) => {
+            services.posts.query(data, (data) => {
                 $scope.$broadcast('hideloading');
                 $scope.gridOptions.totalItems = 50;
                 let newData = generateChangeInfo(data.data.articles);
@@ -184,7 +183,7 @@ export default function() {
                 id: "#openModal",
                 operateFunctions: {
                     open: function() {
-                        console.log('test modal');
+                        console.log('opened modal');
                     }
                 }
             },
@@ -199,16 +198,17 @@ export default function() {
             action: {
                 open: "sidebar",
                 id: "#sidebarBox",
+                transition: 'scale down',
                 operateFunctions: {
                     open: function() {
-                        console.log('test sidebar');
+                        console.log('opened sidebar');
                     }
                 }
             },
             disabled: false
         }, {
             name: "非打开模式按钮",
-            className: "grey",
+            className: "orange",
             id: "nonStyleBtn",
             icon: "download",
             isLinstener: false,
@@ -228,18 +228,37 @@ export default function() {
             title: "modal模式",
             id: "openModal",
             fieldsColumn: 2,
-            modalSize: "small",
+            modalSize: "big",
             modalButtons: [
-                { name: "确定", className: "teal", id: "OkBtn", func: "submitFormFunc" },
-                { name: "取消", className: "black deny", id: "CancelBtn", func: "close" }
+                {
+                    name: "确定",
+                    id: "OkBtn",
+                    className: "teal",
+                    func: "submitFormFunc"
+                },
+                {
+                    name: "取消",
+                    id: "CancelBtn",
+                    className: "black deny",
+                    func: "close"
+                }
             ],
             operateFunctions: {
-                submitFormFunc(result) {
-                    return new Promise((resolve,resject) =>{
-                        setTimeout(() =>{
-                            console.log(result);
-                            resolve(true);
-                        }, 1500)
+                submitFormFunc(result, pause) {
+                    confirmTip.show({
+                        confirmId: 'ttest',
+                        msg:'你确定提交数据表单吗',
+                        onDeny(){
+
+                        },
+                        onApprove() {
+
+                        }
+                    });
+
+                    return new Promise((resolve, reject) => {
+                        console.log(result);
+                        resolve(false);
                     })
                 }
             },
@@ -253,7 +272,7 @@ export default function() {
             }, {
                 type: "input",
                 name: "电话",
-                field_name: "operator",
+                field_name: "phone",
                 defaultText: "请填写电话",
                 text: '',
                 value: '',
@@ -286,7 +305,7 @@ export default function() {
             }, {
                 type: "textarea",
                 name: "备注",
-                field_name: "infos",
+                field_name: "remark",
                 defaultText: "请填写备注说明",
                 value: '',
             }, {
@@ -306,7 +325,9 @@ export default function() {
             title: 'sidebar模式',
             icon: "alarm",
             id: "sidebarBox",
-            fieldsColumn: 2,
+            sidebarStyle:"width:70%;",
+            fieldsColumn: 3,
+            otherShow: false,
             sliderButtons: [ //可以为false或者为[]
                 { name: "确认", className: "teal", id: "testPushBtn", func: 'saveForm' },
                 { name: "取消", className: "black deny", id: "cancelTestPushBtn", func: 'close' }
@@ -317,180 +338,193 @@ export default function() {
                     callback()
                 }
             },
-            fields: [{
-                type: "input",
-                name: "通知人A",
-                defaultText: "请填写通知人A",
-                field_name: "peopleA",
-                value: ''
-            }, {
-                type: "input",
-                name: "手机号A",
-                defaultText: "请填写手机号A",
-                field_name: "phoneA",
-                value: ''
-            }, {
-                type: "input",
-                name: "通知人B",
-                defaultText: "请填写通知人B",
-                field_name: "peopleB",
-                value: ''
-            }, {
-                type: "input",
-                name: "手机号B",
-                defaultText: "请填写手机号B",
-                field_name: "phoneB",
-                value: ''
-            }, {
-                type: "dropdownOne",
-                name: "所属公司",
-                field_name: "company",
-                defaultText: "请选择所属公司",
-                text: '',
-                value: '',
-                data: [
-                    { name: "百度", value: 1 },
-                    { name: "新浪", value: 2 },
-                    { name: "搜狐", value: 3 }
-                ]
-            }, {
-                type: "dropdownTwo",
-                name: "兴趣爱好",
-                field_name: "hobies",
-                defaultText: "请选择兴趣爱好",
-                text: '',
-                value: '',
-                data: [
-                    { name: "篮球", value: 1 },
-                    { name: "Dota", value: 2 },
-                    { name: "游泳", value: 3 },
-                    { name: "爬上", value: 4 },
-                    { name: "划船", value: 5 }
-                ]
-            }, {
-                type: "area",
-                name: "所在省市",
-                field_name: "province",
-                defaultText: "请填写所在省市",
-                id: "addProvince",
-                level: 3,
-                text: '',
-                value: ''
-            }, {
-                type: "dropdownTree",
-                name: "体育器械",
-                defaultText: "请选择体育器械",
-                field_name: "apparatus",
-                treeType: 'checkbox',
-                value: '',
-                text: '',
-                defaultFuncName: "showApparatus",
-                treeFunc: {
-                    showApparatus: function(callBack) {
-                        var data = [{
-                            id: 1,
-                            pId: 0,
-                            name: "体育器械",
-                            open: true
-                        }, {
-                            id: 11,
-                            pId: 1,
-                            name: "球类",
-                            open: false
-                        }, {
-                            id: 111,
-                            pId: 11,
-                            name: "足球",
-                            chkDisabled: true
-                        }, {
-                            id: 112,
-                            pId: 11,
-                            name: "篮球",
-                            chkDisabled: false,
-                            checked: false,
-                            open: true
-                        }, {
-                            id: 12,
-                            pId: 1,
-                            name: "举重器材",
-                            chkDisabled: true,
-                            checked: false,
-                            open: true
-                        }, {
-                            id: 121,
-                            pId: 12,
-                            name: "杠铃",
-                            chkDisabled: false,
-                            checked: false,
-                            open: true
-                        }, {
-                            id: 122,
-                            pId: 12,
-                            name: "哑铃",
-                            chkDisabled: false,
-                            checked: false,
-                            open: true
-                        }];
-                        $timeout(function() {
-                            callBack(data);
-                        })
+            fields: {
+                peopleA: {
+                    type: "input",
+                    label: "通知人A",
+                    defaultText: "请填写通知人A",
+                    value: ''
+                },
+                phoneA: {
+                    type: "input",
+                    label: "手机号A",
+                    defaultText: "请填写手机号A",
+                    value: ''
+                },
+                peopleB: {
+                    type: "input",
+                    label: "通知人B",
+                    defaultText: "请填写通知人B",
+                    value: ''
+                },
+                phoneB: {
+                    type: "input",
+                    label: "手机号B",
+                    defaultText: "请填写手机号B",
+                    field_name: "phoneB",
+                    value: ''
+                },
+                company: {
+                    type: "dropdown",
+                    label: "所属公司",
+                    defaultText: "请选择所属公司",
+                    text: '',
+                    value: '',
+                    data: [
+                        { name: "百度", value: 1 },
+                        { name: "新浪", value: 2 },
+                        { name: "搜狐", value: 3 }
+                    ]
+                },
+                hobies:  {
+                    type: "dropdowns",
+                    label: "兴趣爱好",
+                    defaultText: "请选择兴趣爱好",
+                    text: '',
+                    value: '',
+                    data: [
+                        { name: "篮球", value: 1 },
+                        { name: "Dota", value: 2 },
+                        { name: "游泳", value: 3 },
+                        { name: "爬上", value: 4 },
+                        { name: "划船", value: 5 }
+                    ]
+                },
+                province: {
+                    type: "area",
+                    label: "所在省市",
+                    defaultText: "请填写所在省市",
+                    id: "addProvince",
+                    level: 3,
+                    text: '',
+                    value: ''
+                },
+                apparatus: {
+                    type: "tree",
+                    label: "体育器械",
+                    defaultText: "请选择体育器械",
+                    treeType: 'checkbox',
+                    value: '',
+                    text: '',
+                    defaultFuncName: "showApparatus",
+                    treeFunc: {
+                        showApparatus: function(callBack) {
+                            var data = [{
+                                id: 1,
+                                pId: 0,
+                                name: "体育器械",
+                                open: true
+                            }, {
+                                id: 11,
+                                pId: 1,
+                                name: "球类",
+                                open: false
+                            }, {
+                                id: 111,
+                                pId: 11,
+                                name: "足球",
+                                chkDisabled: true
+                            }, {
+                                id: 112,
+                                pId: 11,
+                                name: "篮球",
+                                chkDisabled: false,
+                                checked: false,
+                                open: true
+                            }, {
+                                id: 12,
+                                pId: 1,
+                                name: "举重器材",
+                                chkDisabled: true,
+                                checked: false,
+                                open: true
+                            }, {
+                                id: 121,
+                                pId: 12,
+                                name: "杠铃",
+                                chkDisabled: false,
+                                checked: false,
+                                open: true
+                            }, {
+                                id: 122,
+                                pId: 12,
+                                name: "哑铃",
+                                chkDisabled: false,
+                                checked: false,
+                                open: true
+                            }];
+                            $timeout(function() {
+                                callBack(data);
+                            });
+                        }
                     }
+                },
+                animal: {
+                    type: "tree",
+                    label: "喜欢的动物",
+                    defaultText: "请选择喜欢的动物",
+                    treeType: 'radio',
+                    value: '',
+                    data: [{
+                        id: 1,
+                        pId: 0,
+                        name: "动物种类",
+                        chkDisabled: true
+                    }, {
+                        id: 11,
+                        pId: 1,
+                        name: "猫科",
+                        chkDisabled: true
+                    }, {
+                        id: 111,
+                        pId: 11,
+                        name: "花豹"
+                    }, {
+                        id: 112,
+                        pId: 11,
+                        name: "美洲虎"
+                    }, {
+                        id: 12,
+                        pId: 1,
+                        name: "犬科",
+                        chkDisabled: true
+                    }, {
+                        id: 121,
+                        pId: 12,
+                        name: "鬣狗",
+                    }, {
+                        id: 122,
+                        pId: 12,
+                        name: "狼"
+                    }, {
+                        id: 13,
+                        pId: 1,
+                        name: "啮齿类",
+                        chkDisabled: true
+                    }, {
+                        id: 131,
+                        pId: 13,
+                        name: "仓鼠"
+                    }]
+                },
+                head: {
+                    type: "file",
+                    label: "上传头像",
+                    defaultText: "请上传头像",
+                    apiService(file) {
+                        var formData = new FormData();
+                        formData.append("path", file);
+                        console.log(file);
+                    },
+                    value: '',
+                },
+                remark: {
+                    type: "textarea",
+                    label: "备注",
+                    defaultText: "请填写备注说明",
+                    value: '',
                 }
-            }, {
-                type: "dropdownTree",
-                name: "喜欢的动物",
-                defaultText: "请选择喜欢的动物",
-                field_name: "animal",
-                treeType: 'radio',
-                value: '',
-                data: [{
-                    id: 1,
-                    pId: 0,
-                    name: "动物种类",
-                    chkDisabled: true
-                }, {
-                    id: 11,
-                    pId: 1,
-                    name: "猫科",
-                    chkDisabled: true
-                }, {
-                    id: 111,
-                    pId: 11,
-                    name: "花豹"
-                }, {
-                    id: 112,
-                    pId: 11,
-                    name: "美洲虎"
-                }, {
-                    id: 12,
-                    pId: 1,
-                    name: "犬科",
-                    chkDisabled: true
-                }, {
-                    id: 121,
-                    pId: 12,
-                    name: "鬣狗",
-                }, {
-                    id: 122,
-                    pId: 12,
-                    name: "狼"
-                }, {
-                    id: 13,
-                    pId: 1,
-                    name: "啮齿类",
-                    chkDisabled: true
-                }, {
-                    id: 131,
-                    pId: 13,
-                    name: "仓鼠"
-                }]
-            }, {
-                type: "textarea",
-                name: "备注",
-                field_name: "infos",
-                defaultText: "请填写备注说明",
-                value: '',
-            }]
+            }
         }];
 
         //设置自定义的template

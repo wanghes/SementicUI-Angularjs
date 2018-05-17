@@ -1,27 +1,28 @@
 import serviceModule from '../modules/service/services';
+import utilsModule from '../modules/service/utils';
 
 let loginModule = angular.module('loginModule',[
     'serviceModule',
-    'ngCookies'
+    'utilsModule'
 ]);
 
 export default function login(){
     loginModule.controller('loginCtrl',loginCtrl);
-    loginCtrl.$inject = ['$scope','users','$cookies'];
-    function loginCtrl($scope, users, $cookies){
-         $scope.loginInfo = {
+    loginCtrl.$inject = ['$scope', 'services', 'utils', '$timeout'];
+    function loginCtrl($scope, services, utils, $timeout){
+        $scope.loginInfo = {
             name:'',
             password : ''
         };
 
+        $timeout(function() {
+            if ($('#loadingBox')) {
+                $('#loadingBox').hide();
+            }
+        });
+
         $scope.submit= function(){
-            users.login.query($scope.loginInfo, function(result){
-                if(result && result[0].id==1){
-                    window.parent.location.pathname='/';
-                }else{
-                    alert("获取数据失败");
-                }
-            });
+            window.parent.location.pathname='/';
         }
     }
 }

@@ -3,38 +3,36 @@ export default function($timeout){
         restrict:'E',
         replace:true,
         priority:9999,
-        template:` <div class="ui mini basic confirm modal" id={{nodeId}}>
-            <div class="ui icon header">
-              确认消息
-            </div>
+        template:`
+        <div class="ui mini basic confirm modal" id={{ nodeId }}>
+            <div class="ui icon header">{{ title || '确认消息' }}</div>
             <div class="content">
-              <p>{{ message }}</p>
+                <p>{{ message }}</p>
             </div>
             <div class="actions">
-              <div class="ui red cancel inverted button">
-                <i class="remove icon"></i>否
-              </div>
-              <div class="ui green ok inverted button">
-                <i class="checkmark icon"></i>是
-              </div>
+                <div class="ui red cancel inverted button">
+                    <i class="remove icon"></i>否
+                </div>
+                <div class="ui green ok inverted button">
+                    <i class="checkmark icon"></i>是
+                </div>
             </div>
-          </div>
+        </div>
         `,
         scope:{
             confirmStatus:'=confirmStatus',
             message:"@",
             confirmOk:"&",
+            title:'@',
             nodeId:"@"
         },
-        link:function(scope,elem,attrs){
-            const setFalse = ()=>{
+        link:function(scope, elem, attrs){
+            const setFalse = () =>{
                 scope.confirmStatus = false;
             }
 
-             $timeout(()=>{
+            $timeout(() => {
                 let node =  $(`.confirm#${scope.nodeId}`);
-                    
-                
                 node.modal({
                     closable  : false,
                     duration:150,
@@ -46,17 +44,16 @@ export default function($timeout){
                         scope.confirmOk()
                     }
                 });
-           
-                scope.$watch('confirmStatus',(newVal,oldVal)=>{
+
+                scope.$watch('confirmStatus',(newVal, oldVal) => {
                     if(newVal){
-                        node.modal('show');       
+                        node.modal('show');
                     }else{
                         node.modal('hide');
                     }
                 });
             });
-                
-            
+
         }
     }
 }

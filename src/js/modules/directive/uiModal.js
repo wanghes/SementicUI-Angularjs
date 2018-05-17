@@ -180,7 +180,7 @@ export default function($timeout, pNotify, services, $sce) {
 
             $timeout(function() {
                 scope.itemClass = "sixteen";
-                scope.itemWidth = Math.ceil(100 / scope.fieldsColumn);
+                scope.itemWidth = Math.floor(100 / scope.fieldsColumn);
 
                 $(elem).find('.ui.search.selection.dropdown').dropdown({
                     direction: 'downward',

@@ -3,20 +3,21 @@ export default function($timeout) {
         restrict: 'E',
         priority: 9999,
         template: `<div class="sixteen wide field">
-                        <label class="treeview_label">{{item.name}}</label>
-                        <input type="hidden" name="{{item.field_name}}" readonly  value="{{item.value}}" ng-model="item.field_name">
+                        <label class="treeview_label">{{item.label}}</label>
+                        <input type="hidden" name="{{name}}" readonly  value="{{item.value}}" />
                         <div class="ui icon input" style="width:{{item.width}}" >
                             <input type="text" class="ztreeShow"  readonly placeholder="{{item.defaultText}}" data-func="{{item.defaultFuncName}}">
                             <i class="caret down icon"></i>
                         </div>
                         <div class="menuContent" style="display: none;position: absolute;">
-                            <ul class="ztree" id="{{item.field_name}}" style="margin-top:0; width:100%; height: 250px;" data-type="{{item.treeType}}"></ul>
+                            <ul class="ztree" id="{{name}}" style="margin-top:0; width:100%; height: 250px;" data-type="{{item.treeType}}"></ul>
                         </div>
                     </div>`,
         replace: false,
         transclude: false,
         scope: {
-            item: '='
+            item: '=',
+            name: '@'
         },
         link: function(scope, elem, attrs) {
             let $this = $(elem).find('.ztreeShow');
@@ -131,7 +132,7 @@ export default function($timeout) {
             }
 
             function zTreeInit(result) {
-                let $ztree = $(elem).find('#' + scope.item.field_name);
+                let $ztree = $(elem).find('#' + scope.name);
                 // console.log($ztree);
                 //按钮类型，来确定是否是复选还是单选
                 let type = $ztree.data('type');
@@ -150,7 +151,7 @@ export default function($timeout) {
                     }, 500);
                 }
                 //设置默认节点展开
-                treeObj = $.fn.zTree.getZTreeObj(`${scope.item.field_name}`);
+                treeObj = $.fn.zTree.getZTreeObj(`${scope.name}`);
 
                 let nodes = treeObj.getNodes();
                 for (let i = 0; i < nodes.length; i++) {
@@ -185,7 +186,7 @@ export default function($timeout) {
 
             // 选中前处理
             function beforeClick(treeId, treeNode) {
-                let postSel = $('input[name=' + scope.item.field_name + ']')
+                let postSel = $('input[name=' + scope.name + ']')
                     //初始选中前将pid附到这个隐藏域中
                 if (!!PID) {
                     postSel.val(PID);
@@ -209,7 +210,7 @@ export default function($timeout) {
                 if (pid.length > 0) pid = pid.substring(0, pid.length - 1);
 
                 // let initSel = $(`#${filedName}_display`);
-                let postSel = $('input[name=' + scope.item.field_name + ']')
+                let postSel = $('input[name=' + scope.name + ']')
 
                 $this.val(v);
                 //将pid附到这个隐藏域中
@@ -237,7 +238,7 @@ export default function($timeout) {
 
             // 监听mousedown
             function onBodyDown(event) {
-                if (!(event.target.id == scope.item.field_name || event.target.className == "menuContent" || $(event.target).parents(".menuContent").length > 0)) {
+                if (!(event.target.id == scope.name || event.target.className == "menuContent" || $(event.target).parents(".menuContent").length > 0)) {
                     hideMenu();
                 }
             }

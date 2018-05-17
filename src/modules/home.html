@@ -8,11 +8,11 @@
 
 <body ng-controller="homeCtrl" class="iframeBody" ng-cloak>
     <!-- 页面loading -->
-    <page-loading load-status="pageLoading"></page-loading>
+    <ui-page-loading load-status="pageLoading"></ui-page-loading>
     <!-- 设置右侧滑动的slider -->
     <ui-slider-modal ng-repeat="slider in sliderModals" slider-info="slider"></ui-slider-modal>
     <!-- 设置modal弹框内容 -->
-    <lean-modal ng-repeat="modal in modals" modal-info="modal"></lean-modal>
+    <ui-modal ng-repeat="modal in modals" modal-info="modal"></ui-modal>
     <!-- 主容器设置 -->
     <main-box class="pusher main_box">
         <!-- 顶部下拉搜索 -->
@@ -24,8 +24,18 @@
         <button-group buttons="operateButton"></button-group>
         <!-- 数据表格 -->
         <div id="dataTable">
-            <div id="grid" class="grid main_grid" ui-grid="gridOptions" ui-grid-cellNav ui-grid-resize-columns ui-grid-pinning ui-grid-move-columns ui-grid-exporter ui-grid-selection ui-grid-auto-resize ui-grid-pagination>
-                    <grid-loading></grid-loading>
+            <div id="grid"
+            class="grid main_grid"
+            ui-grid="gridOptions"
+            ui-grid-cellNav
+            ui-grid-resize-columns
+            ui-grid-pinning
+            ui-grid-move-columns
+            ui-grid-exporter
+            ui-grid-selection
+            ui-grid-auto-resize
+            ui-grid-pagination>
+                <grid-loading></grid-loading>
             </div>
         </div>
     </main-box>
@@ -44,6 +54,6 @@
         </div>
     </script>
 </body>
-<script type="text/javascript" src="../js/lib/lib.js"></script>
+<script type="text/javascript" src="../js/lib.js"></script>
 <script type="text/javascript" src="../js/main.js"></script>
 </html>

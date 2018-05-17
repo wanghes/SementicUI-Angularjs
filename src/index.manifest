@@ -5,12 +5,12 @@ CACHE MANIFEST
 index.html
 
 #js
-js/lib/lib.js
+js/lib.js
 js/main.js
 js/frameWrap.js
 
 #css
-css/saleTrack.css
+css/backend.css
 
 #icon
 fonts/icons.woff2
@@ -25,7 +25,9 @@ fonts/ui-grid.svg
 fonts/ui-grid.woff
 
 #image
-images/home_page_logo.png
+images/logo.png
+images/mCSB_buttons.png
+
 
 NETWORK:
 *

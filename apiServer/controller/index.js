@@ -18,29 +18,29 @@ const produceNewsData = () => {
     }
     return {
         articles
-    }
+    };
 }
 const sleep = (time) =>{
-    return new Promise((resolve,resject) =>{
-        setTimeout(() =>{
+    return new Promise((resolve,resject) => {
+        setTimeout(() => {
             resolve();
-        },time)
+        }, time);
     })
 }
 let query = (values) =>{
     return new Promise((resolve,reject) =>{
-        resolve(values)
-    })
+        resolve(values);
+    });
 }
 
 const fetchPosts = async ctx =>{
-    await sleep(1600);
+    await sleep(0);
     let result = await produceNewsData();
-    if(result){
+    if(result) {
         ctx.response.body = { code:1, data:result };
     }
 }
 
-module.exports ={
+module.exports = {
     fetchPosts
 }

@@ -15,11 +15,11 @@ export default function(services,$timeout){
             label:"@"
         },
         controller:function($scope){
-           
+
         },
         link:function(scope,elem,attrs){
 
-        	$timeout(()=>{
+        	$timeout(() =>{
                 let search_complete = elem.find('.search_complete');
                 let API_TOKEN = services.apiToken;
                 scope.titleInfo = ""
@@ -45,7 +45,7 @@ export default function(services,$timeout){
                             xhr.setRequestHeader ('Accept', 'application/json');
                             xhr.setRequestHeader ('Content-Type', 'application/json');
                             xhr.setRequestHeader ('Authorization', API_TOKEN ? "Bearer "+ API_TOKEN :"");
-                        },       
+                        },
                         beforeSend: function(settings) {
                             if(!settings.urlData.query){
                                 return false;
@@ -58,7 +58,7 @@ export default function(services,$timeout){
                             };
 
                             if(response.code==1){
-                                angular.forEach(response.data,(item)=>{
+                                angular.forEach(response.data,(item) =>{
                                     newResponse.results.push({
                                         title:item[scope.label],
                                         value:item.id
@@ -73,7 +73,7 @@ export default function(services,$timeout){
 
 
         	},0)
-        	
+
         }
     }
 }

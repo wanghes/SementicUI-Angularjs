@@ -39,10 +39,5 @@ export default function dashboard() {
             $scope.loginMessage = '<br><b>今天我们去哪里？</b>';
         }, 1000);
 
-
-
-        /*oauth.callJudgeLogin(function(userInfo) {
-            $scope.nickname = userInfo.nick_name;
-        });*/
     }
 }

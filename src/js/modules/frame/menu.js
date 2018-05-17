@@ -72,16 +72,16 @@ export default function init(){
         let menuSecondHtml = ``;
         /***设置宽侧边栏导航****/
         menuFirstHtml =`<div class="logo">
-                        <header class="menu-header">
-                        <span class="menu-header-title">后台管理系统</span>
-                        </header>
+                            <header class="menu-header">
+                                <span class="menu-header-title">后台管理系统</span>
+                            </header>
                         </div>`;
         menu.forEach(function(value,index){
-            if(index==0){
+            if (index==0) {
                 //let html = secondFunc(value, 'newspaper', '销售跟踪'); //先去掉一级标题
                 let html = secondFunc(value);
                 menuFirstHtml += html;
-            }else if(index==1){
+            } else if(index==1) {
                 //let html = secondFunc(value, 'user', '用户操作'); //先去掉一级标题
                 let html = secondFunc(value);
                 menuFirstHtml += html;

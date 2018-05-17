@@ -66,7 +66,7 @@ export default function(){
 
                     //DOM清空时间控件中的value值
                     if(fields[key]['type']=='timePicker'){
-                        $('#'+$scope.searchModalId+' input[data-type="timePicker"]').val(fields[key].text).change(); 
+                        $('#'+$scope.searchModalId+' input[data-type="timePicker"]').val(fields[key].text).change();
                     }
                     //DOM清空地区控件中的value值
                     if(fields[key]['type']=='area'){
