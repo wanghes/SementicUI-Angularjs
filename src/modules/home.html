@@ -16,12 +16,12 @@
     <!-- 主容器设置 -->
     <main-box class="pusher main_box">
         <!-- 顶部下拉搜索 -->
-        <top-search search-modal-id="topModal" search-column-num="4" search-keys="searchKeys">
-            <top-search-form></top-search-form>
+        <ui-top-search search-modal-id="topModal" search-column-num="4" search-keys="searchKeys">
+            <ui-top-search-form></ui-top-search-form>
             <ui-searched-items></ui-searched-items>
-        </top-search>
+        </ui-top-search>
         <!-- 按钮组 -->
-        <button-group buttons="operateButton"></button-group>
+        <ui-button-group buttons="operateButton"></ui-button-group>
         <!-- 数据表格 -->
         <div id="dataTable">
             <div id="grid"
@@ -35,9 +35,10 @@
             ui-grid-selection
             ui-grid-auto-resize
             ui-grid-pagination>
-                <grid-loading></grid-loading>
+                <ui-grid-loading></ui-grid-loading>
             </div>
         </div>
+
     </main-box>
     <!-- 设置template -->
     <script id="modalTpl.html" type="text/ng-template">

@@ -2,7 +2,14 @@ export default function($timeout){
     return {
         restrict:'E',
         replace:true,
-        template:`<input type="text" class="normal_input" data-type="timePicker" id="{{model.id}}" placeholder="{{model.defaultText}}" ng-model="model.text">`,
+        template:`
+        <input type="text"
+        class="normal_input"
+        data-type="timePicker"
+        id="{{model.id}}"
+        placeholder="{{model.defaultText}}"
+        ng-model="model.text">
+        `,
         transclude:true,
         scope:{
             model:'='
@@ -45,18 +52,16 @@ export default function($timeout){
                     scope.model.text = `${start_date} 至 ${end_date}`;
                 }
 
-
-
                 var dateRange = new pickerDateRange(scope.model.id, {
                     aRecent7Days : 'aRecent7DaysDemo3', //最近7天
                     isTodayValid : true,
                     startDate : start_date,
                     endDate : end_date,
-                    needCompare : true,
+                    needCompare : false,
                     isSingleDay : false,
                     shortOpr : false,
                     defaultText : ' 至 ',
-                    theme : 'gri',
+                    theme : 'ta',
                     success : function(obj) {
                         scope.model.value = [obj.startDate + " 00:00:00", obj.endDate + " 23:59:59"];
                         $('#'+scope.model.id).val(`${obj.startDate} 至 ${obj.endDate}`);

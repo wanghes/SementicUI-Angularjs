@@ -1,4 +1,5 @@
 import utilsModule from './utils';
+import pNotify from './pNotify';
 let tableModule = angular.module('tableModule', [
     'ui.grid',
     'ui.grid.autoResize',
@@ -10,7 +11,8 @@ let tableModule = angular.module('tableModule', [
     'ui.grid.pinning',
     'ui.grid.cellNav',
     'ui.grid.grouping',
-    'utilsModule'
+    'utilsModule',
+    "pNotifyModule"
 ]);
 
 tableModule.factory('tableFactory', tableFactoryFunc);
@@ -22,15 +24,16 @@ tableFactoryFunc.$inject = [
     'uiGridConstants',
     'uiGridColumnMenuService',
     'uiGridMoveColumnService',
-    'utils'
+    'utils',
+    'pNotify'
 ];
 
-function tableFactoryFunc($timeout, $q, $interval, i18nService, uiGridConstants, uiGridColumnMenuService, uiGridMoveColumnService, utils) {
+function tableFactoryFunc($timeout, $q, $interval, i18nService, uiGridConstants, uiGridColumnMenuService, uiGridMoveColumnService, utils, pNotify) {
     var factory = {};
     var tableConfigs = [];
 
     function array_unique(ar){
-        var m,n=[],o= {};
+        var m, n = [],o = {};
         for (var i=0;(m= ar[i])!==undefined;i++){
             if (!o[m]){
                 n.push(m);o[m]=true;
@@ -47,6 +50,38 @@ function tableFactoryFunc($timeout, $q, $interval, i18nService, uiGridConstants,
                 deferred.resolve(title);
             }, 1000, 1);
             return deferred.promise;
+        }
+        // todo
+        scope.searchData = {};
+        scope.isRefresh = false;
+        angular.extend(scope.searchKeys, {
+            operateFunction: function() {
+                getPage();
+            }
+        });
+
+        function getPage() {
+            let data = angular.copy(scope.searchData);
+            data.page = scope.gridOptions.paginationCurrentPage;
+            data.per_page = scope.gridOptions.paginationPageSize;
+            scope.gridLoading = true;
+            config.fetchInfo(data, (data) => {
+                scope.gridOptions.totalItems = 50;
+
+                if (config.requireChangeInfo) {
+                    scope.gridOptions.data = angular.isFunction(config.done) && config.done(data, true);
+                } else {
+                    scope.gridOptions.data = angular.isFunction(config.done) && config.done(data, false);
+                }
+
+                scope.gridLoading = false;
+                scope.initTableData();
+                if(scope.isRefresh) {
+                    pNotify.show('刷新成功','success');
+                    scope.isRefresh = false;//刷新完之后再将isRefresh置为false，否则则会一直弹这个刷新成功
+                    scope.resetTableData(); //重置表格的相关数据
+                }
+            });
         }
 
         //是否启用水平滚动条
@@ -132,7 +167,7 @@ function tableFactoryFunc($timeout, $q, $interval, i18nService, uiGridConstants,
                 tableConfigs.push(config);
                 //初始化表格的相关数据
                 scope.initTableData = function(){
-                    angular.forEach(tableConfigs,function(everyConfig){
+                    angular.forEach(tableConfigs, function(everyConfig){
                         if(everyConfig.item){
                              scope[everyConfig.item] = null;
                         }else{
@@ -192,16 +227,16 @@ function tableFactoryFunc($timeout, $q, $interval, i18nService, uiGridConstants,
                     } else {
                       scope.gridOptions.sort = sortColumns[0].sort.direction;
                     }
-                    if(config.getPage){
-                          config.getPage();
-                          gridApi.core.queueRefresh();
-                     }
+                    if(getPage){
+                        getPage();
+                        gridApi.core.queueRefresh();
+                    }
                 });
 
                 //console.log(gridApi.pagination.getTotalPages());//获取总页数
                 gridApi.pagination.on.paginationChanged(scope, function (newPage, pageSize) {
-                    if(config.getPage){
-                        config.getPage();
+                    if(getPage){
+                        getPage();
                         gridApi.core.queueRefresh();
                     }
                 });

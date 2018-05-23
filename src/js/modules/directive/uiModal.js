@@ -45,7 +45,7 @@ export default function($timeout, pNotify, services, $sce) {
                                 </div>
                             </div>
                             <div ng-if="field.type=='dropdownTree'" class="sixteen wide field" style="padding:7px 5px;">
-                                <tree-view item="field"></tree-view>
+                                <ui-tree-view item="field"></ui-tree-view>
                             </div>
                             <div ng-if="field.type=='input'" class="sixteen wide field" style="padding:7px 5px;">
                                 <label>{{field.name}}</label>

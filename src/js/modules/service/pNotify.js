@@ -38,23 +38,26 @@ pNotify.factory("confirmTip", ['$compile','$document','$rootScope',
                 onDeny:angular.noop,
                 onApprove:angular.noop,
                 size:"mini",
+                title: '确认消息',
+                ok: '是',
+                no: '否',
                 appendTo: $document[0].body
             }, options || {});
 
             var scope = options.scope || $rootScope.$new();
             let html = `<div class="ui ${options.size} basic confirm modal" id="${options.confirmId}">
                 <div class="ui icon header">
-                  确认消息
+                   ${options.title}
                 </div>
                 <div class="content">
                   <p>${options.msg}</p>
                 </div>
                 <div class="actions">
                   <div class="ui red cancel inverted button">
-                    <i class="remove icon"></i>否
+                    <i class="remove icon"></i>${options.no}
                   </div>
                   <div class="ui green ok inverted button">
-                    <i class="checkmark icon"></i>是
+                    <i class="checkmark icon"></i>${options.ok}
                   </div>
                 </div>
               </div>`;
@@ -69,7 +72,7 @@ pNotify.factory("confirmTip", ['$compile','$document','$rootScope',
             $compile(element)(scope);
 
             let node =  $(`.confirm#${options.confirmId}`);
-                        
+
             node.modal({
                 closable  : false,
                 duration:150,

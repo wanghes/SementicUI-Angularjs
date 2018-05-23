@@ -21,8 +21,6 @@ export default function() {
     homeModule.controller("homeCtrl", homeCtrl)
     homeCtrl.$inject = ['$scope', 'pNotify', 'tableFactory', 'tableModal', '$timeout', 'BASE_URL', 'services', 'utils', 'confirmTip'];
     function homeCtrl($scope, pNotify, tableFactory, tableModal, $timeout, BASE_URL, services , utils, confirmTip) {
-        $scope.searchData = {};
-        $scope.isRefresh = false;
         $scope.searchKeys = {
             fields: {
                 timeArea: {
@@ -54,10 +52,7 @@ export default function() {
                     text: '',
                     value: '',
                     type: "input",
-                },
-            },
-            operateFunction: function() {
-                getData();
+                }
             }
         };
 
@@ -109,58 +104,45 @@ export default function() {
             noUnselect: false,
             multiSelect: true,
             enableGridMenu: true,
-            getPage: getData,
             allowMenuReset:true,
+            fetchInfo: services.posts.query,
             item: "item",
-            allowMenuReset:true,
-            menuReset:'homeColumns'
+            menuReset:'homeColumns',
+            requireChangeInfo: true,
+            done(data, changeInfoStatus) {
+                let result = data.data.articles;
+                if (changeInfoStatus) {
+                    return result.map(function(item){
+                        switch(item.status) {
+                            case 1:
+                            item["status_label"] = `<a class="ui orange label tiny">已经提交</a>`;
+                            break;
+                            case 2:
+                            item["status_label"] = `<a class="ui green label tiny">已经完成</a>`;
+                            break;
+                            case 3:
+                            item["status_label"] = `<a class="ui blue label tiny">等待回复</a>`;
+                            break;
+                            case 4:
+                            item["status_label"] = `<a class="ui red label tiny">已经驳回</a>`;
+                            break;
+                            default:
+                                //
+                        }
+                        return item;
+                    });
+                }
+
+                return result;
+            }
         });
-        function generateChangeInfo (data){
-            return data.map(function(item){
-                switch(item.status){
-                    case 1:
-                    item["status_label"] = `<a class="ui orange label tiny">已经提交</a>`;
-                    break;
-                    case 2:
-                    item["status_label"] = `<a class="ui green label tiny">已经完成</a>`;
-                    break;
-                    case 3:
-                    item["status_label"] = `<a class="ui blue label tiny">等待回复</a>`;
-                    break;
-                    case 4:
-                    item["status_label"] = `<a class="ui red label tiny">已经驳回</a>`;
-                }
-                return item;
-            });
-        }
-
-        function getData() {
-            let data = angular.copy($scope.searchData);
-            data.page = $scope.gridOptions.paginationCurrentPage;
-            data.per_page = $scope.gridOptions.paginationPageSize;
-            $scope.gridLoading = true;
-            services.posts.query(data, (data) => {
-                $scope.$broadcast('hideloading');
-                $scope.gridOptions.totalItems = 50;
-                let newData = generateChangeInfo(data.data.articles);
-                $scope.gridOptions.data = newData;
-                $scope.gridLoading = false;
-                $scope.initTableData();
-                if($scope.isRefresh) {
-                    pNotify.show('刷新成功','success');
-                    $scope.isRefresh = false;//刷新完之后再将isRefresh置为false，否则则会一直弹这个刷新成功
-                    $scope.resetTableData(); //重置表格的相关数据
-                }
-            });
-        }
-
 
         $scope.operateButton = [{
             name: "template模式按钮",
             className: "primary",
             icon: "plus",
             id: "templateBtn",
-            isLinstener: false,
+            isLinstener: true,
             isMulti: false,
             action: {
                 open: "template",
@@ -176,8 +158,8 @@ export default function() {
             className: "teal",
             id: "modalBtn",
             icon: "recycle",
-            isLinstener: false,
-            isMulti: false,
+            isLinstener: true,
+            isMulti: true,
             action: {
                 open: "modal",
                 id: "#openModal",

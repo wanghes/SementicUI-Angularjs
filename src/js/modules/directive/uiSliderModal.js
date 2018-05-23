@@ -58,7 +58,7 @@ export default function($timeout, pNotify, services, $sce) {
                                     </div>
                                 </div>
                                 <div ng-if="field.type == 'tree'" class="sixteen wide field slider_io">
-                                    <tree-view item="field" name="{{ name }}"></tree-view>
+                                    <ui-tree-view item="field" name="{{ name }}"></ui-tree-view>
                                 </div>
                                 <div ng-if="field.type == 'file'" class="sixteen wide field slider_io">
                                     <label>{{ field.label }}</label>

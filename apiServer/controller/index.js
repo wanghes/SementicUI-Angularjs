@@ -34,7 +34,7 @@ let query = (values) =>{
 }
 
 const fetchPosts = async ctx =>{
-    await sleep(0);
+    await sleep(1500);
     let result = await produceNewsData();
     if(result) {
         ctx.response.body = { code:1, data:result };
