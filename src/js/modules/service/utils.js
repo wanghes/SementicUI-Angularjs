@@ -52,6 +52,22 @@ function utilsModuleFunc($cookies, $http, $rootScope){
             var source = buffer.join("&").replace(/%20/g, "+");
             return (source);
         },
+        array_unique: function(ar, sort){
+            var m,n=[],o= {};
+            for (var i=0; (m= ar[i]) !== undefined; i++){
+                if (!o[m]) {
+                    n.push(m);
+                    o[m]=true;
+                }
+            }
+            if (sort) {
+                return n.sort(function(a,b){return a-b});;
+            }
+            return n;
+        },
+        GenNonDuplicateID: function() {
+            return Math.random().toString(36).substr(3)
+        },
         throttle:function(func, wait, options) {
             var context, args, result;
             var timeout = null;

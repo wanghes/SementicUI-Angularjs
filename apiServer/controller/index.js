@@ -7,6 +7,7 @@ const produceNewsData = () => {
     let articles = [];
     for (let i = 0; i < 20; i++) {
         let newArticleObject = {
+            id:Random.guid(),
             title: Random.csentence(5, 30), //  Random.csentence( min, max )
             author_name: Random.cname(), // Random.cname() 随机生成一个常见的中文姓名
             area: Random.province() + '-' +  Random.city() + '-' +  Random.county(),
@@ -34,7 +35,8 @@ let query = (values) =>{
 }
 
 const fetchPosts = async ctx =>{
-    await sleep(1500);
+    console.log(ctx.request.body);
+    await sleep(300);
     let result = await produceNewsData();
     if(result) {
         ctx.response.body = { code:1, data:result };

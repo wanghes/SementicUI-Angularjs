@@ -51,6 +51,11 @@ gulp.task('fonts',function(){
     gulp.src('./src/fonts/**', { base: 'src' }).pipe(gulp.dest('./www/'));
 });
 
+//设置fonts字体的生成路径
+gulp.task('directives',function(){
+    gulp.src('./src/directives/**', { base: 'src' }).pipe(gulp.dest('./www/'));
+});
+
 gulp.task('css',function(){
     gulp.src('./src/less/backend.less') //多个文件以数组形式传入
         .pipe(less())
@@ -184,6 +189,9 @@ gulp.task('manifest', function (){
 });
 //watch 模块的变化 watch源 无需加入相对路径 ‘./’符号，否则不能监听到新建的文件变化
 gulp.task('watch', function(){
+    gulp.watch(['./src/directives/*.html'],function(){
+        runSequence('directives', 'reloadBrowser', function(){});
+    });
     gulp.watch(['./src/modules/**/*.html','./src/*.html'],function(){
         runSequence('htmlDev', 'reloadBrowser', function(){});
     });
@@ -201,10 +209,10 @@ gulp.task('watch', function(){
     });
 });
 
-gulp.task('default', ['lib', 'fonts', 'images', 'css', 'frameWrapJs', 'htmlDev', 'mainJs', 'watch'], function() {
+gulp.task('default', ['lib', 'directives', 'fonts', 'images', 'css', 'frameWrapJs', 'htmlDev', 'mainJs', 'watch'], function() {
     gulp.start('server');
 });
-gulp.task('build', ['lib', 'fonts', 'images', 'cssPro', 'frameWrapJs', 'htmlPro', 'mainJsPro', 'manifest'], function() {
+gulp.task('build', ['lib', 'directives', 'fonts', 'images', 'cssPro', 'frameWrapJs', 'htmlPro', 'mainJsPro', 'manifest'], function() {
     console.log('compile over');
 });
 

@@ -7,28 +7,31 @@ export default function(module) {
             require: '^uiTopSearch',
             priority:1000,
             template: `
-            <div class="ui top sidebar top_modal" id="{{parentSearchModalId}}">
+            <div class="ui top sidebar top_modal" id="{{ parentSearchModalId }}">
                 <form class="ui mini form selfForm search_form" id="selfForm">
-                    <div class="fields five" ng-repeat="item in items">
-                        <div class="field" ng-repeat="one in item">
-                            <label>{{one.name}}</label>
-                            <div ng-switch="one.type">
-                              <div ng-switch-when="dropdown">
-                                 <ui-dropdown model="one"></ui-dropdown>
-                              </div>
-                              <div ng-switch-when="timePicker">
-                                 <ui-date-range model="one"></ui-date-range>
-                              </div>
-                              <div ng-switch-when="input">
-                                 <input type="text" ng-model="one.text" >
-                              </div>
-                              <div ng-switch-when="area">
-                                 <ui-city selected-province="one.value" level="{{one.level}}"></ui-city>
-                              </div>
-                              <!--<div ng-switch-default>
-                                 <h1>切换</h1>
-                                 <p>选择不同选项显示对应的值。</p>
-                              </div>-->
+                    <div class="fields five" ng-repeat="vals in items">
+                        <div class="field" ng-repeat="item in vals">
+                            <label>{{ item.label }}</label>
+                            <div ng-switch="item.type">
+                                <div ng-switch-when="dropdown">
+                                    <ui-dropdown model="item"></ui-dropdown>
+                                </div>
+                                <div ng-switch-when="dropdowns">
+                                    <ui-dropdown model="item"></ui-dropdown>
+                                </div>
+                                <div ng-switch-when="datePicker">
+                                    <ui-date-range model="item"></ui-date-range>
+                                </div>
+                                <div ng-switch-when="input">
+                                    <input type="text" ng-model="item.value" />
+                                </div>
+                                <div ng-switch-when="area">
+                                    <ui-city selected="item.value" level="{{ item.level }}"></ui-city>
+                                </div>
+                                <!--<div ng-switch-default>
+                                    <h1>切换</h1>
+                                    <p>选择不同选项显示对应的值。</p>
+                                </div>-->
                             </div>
                         </div>
                     </div>
@@ -49,9 +52,9 @@ export default function(module) {
                     parentCtrl.closeSearchModal();
                 };
                 scope.$on('to-child',function(){
-                  //console.log("搜索重置后的表单内容：\n");
-                  //console.log(scope.searchKeys.fields);
-                })
+                    console.log("搜索重置后的表单内容：\n");
+                    //console.log(scope.searchKeys.fields);
+                });
 
                 scope.resetSearchModal = function(){
                     parentCtrl.resetSearchModal();
@@ -62,12 +65,12 @@ export default function(module) {
                 scope.parentSearchModalId = parentCtrl.searchModalId;
                 scope.parentSearchColumnNum = parentCtrl.searchColumnNum;
 
-                scope.makeSplitArr = function(fields,splitNum){
+                scope.makeSplitArr = function(fields, splitNum) {
                     let keysArr = Object.keys(fields);
-                    let arr = [[]],idx = 0;
+                    let arr = [[]], idx = 0;
                     let len = keysArr.length;
 
-                    for(let i =0; i<len; i++){
+                    for (let i = 0; i < len; i++) {
                         if(i%splitNum==0 && i!=0){
                             arr.push([]);
                         }
@@ -83,9 +86,8 @@ export default function(module) {
                 };
 
                 $timeout(function(){
-                    if(scope.$parent.searchKeys!=null && !angular.equals({}, scope.$parent.searchKeys)) {
-                        //scope.openSearchModal();
-                        scope.items = scope.makeSplitArr(scope.$parent.searchKeys.fields,scope.parentSearchColumnNum);
+                    if(parentCtrl.searchKeys != null && !angular.equals({}, parentCtrl.searchKeys)) {
+                        scope.items = scope.makeSplitArr(parentCtrl.searchKeys.fields,scope.parentSearchColumnNum);
                     }
                 });
             }

@@ -1,0 +1,91 @@
+<div class="ui modal ui_modal {{ modalSize }}" id="{{ id }}">
+    <i class="close icon"></i>
+    <div class="header" ng-bind="title"></div>
+    <div class="content" id="{{id}}InsertModal">
+        <form novalidate class="ui form ui_form" id="{{ formID }}">
+            <div ng-repeat="(name, field) in fields" ng-hide="field.unShow" style="width:{{ itemWidth }}%">
+                <!-- 普通input输入框 -->
+                <div ng-if="field.type == 'input'" class="sixteen wide field">
+                    <label>{{ field.label }}</label>
+                    <input
+                        type="text"
+                        name="{{ name }}"
+                        ng-model="field.value"
+                        ng-value="field.value"
+                        placeholder="{{ field.defaultText }}" />
+                </div>
+                <!-- 下拉单选 -->
+                <div ng-if="field.type == 'dropdown'" class="sixteen wide field">
+                    <label>{{ field.label }}</label>
+                    <div class="ui search selection dropdown" data-handle="{{ field.handle }}">
+                        <input type="hidden" name="{{ name }}" ng-value="field.value" />
+                        <i class="dropdown icon"></i>
+                        <div ng-class="{ true: 'text', false: 'text default' }[field.text.length > 0]">
+                            {{ field.text || field.defaultText }}
+                        </div>
+                        <div class="menu">
+                            <div class="item" ng-repeat="data in field.data" data-value="{{ data.value }}">
+                                <span>{{ data.name }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- 下拉多选 -->
+                <div ng-if="field.type == 'dropdowns'" class="sixteen wide field">
+                    <label>{{ field.label }}</label>
+                    <div class="ui search selection dropdown multiple" data-handle="{{ field.handle }}">
+                        <input type="hidden" name="{{ name }}" ng-value="field.value" />
+                        <i class="dropdown icon"></i>
+                        <div class="text default">{{ field.text || field.defaultText }}</div>
+                        <div class="menu">
+                            <div class="item" ng-repeat="data in field.data" data-value="{{ data.value }}">
+                                <span>{{ data.name }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- 下拉树形选择 -->
+                <div ng-if="field.type == 'dropdownTree'" class="sixteen wide field">
+                    <ui-tree-view item="field" />
+                </div>
+                <!-- 文件选择组件 -->
+                <div ng-if="field.type == 'file'" class="sixteen wide field">
+                    <label>{{ field.label }}</label>
+                    <ui-file-input
+                        api-service="{{ field.apiService }}"
+                        name="{{ name }}"
+                        value="{{ field.value }}"
+                        placeholder="{{ field.defaultText }}"
+                        ng-upload-change="fileChanged($event, name)" />
+                </div>
+                <!-- 多行文本输入框 -->
+                <div ng-if="field.type == 'textarea'" class="sixteen wide field">
+                    <label>{{ field.label }}</label>
+                    <textarea
+                        rows="2"
+                        name="{{ name }}"
+                        ng-model="field.value"
+                        placeholder="{{ field.defaultText }}"></textarea>
+                </div>
+                <!-- 地区选择器 -->
+                <div ng-if="field.type == 'area'" class="sixteen wide field">
+                    <label>{{ field.label }}</label>
+                    <ui-city selected="field.value" level="{{ field.level }}"></ui-city>
+                </div>
+            </div>
+        </form>
+        <div ng-show="message">
+            {{ message }}
+        </div>
+    </div>
+    <div class="actions" style="text-align:{{ buttonLocation }}">
+        <div
+            ng-repeat="modalButton in modalButtons"
+            id="{{ modalButton.id }}"
+            data-func="{{ modalButton.func }}"
+            ng-click="modalBtnEventFunc(modalButton.id)"
+            class="ui {{ modalButton.className }} button">
+            {{ modalButton.name }}
+        </div>
+    </div>
+</div>

@@ -10,7 +10,7 @@ const router = require("./controller/index.js")
 
 app.use(cors());
 app.use(koaBody());
-app.use(route.get('/api/posts', router.fetchPosts));
+app.use(route.post('/api/posts', router.fetchPosts));
 
 app.use(compress()); //对资源文件进行压缩
 

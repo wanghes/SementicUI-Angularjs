@@ -32,15 +32,6 @@ function tableFactoryFunc($timeout, $q, $interval, i18nService, uiGridConstants,
     var factory = {};
     var tableConfigs = [];
 
-    function array_unique(ar){
-        var m, n = [],o = {};
-        for (var i=0;(m= ar[i])!==undefined;i++){
-            if (!o[m]){
-                n.push(m);o[m]=true;
-            }
-        }
-        return n.sort(function(a,b){return a-b});;
-    }
     factory.init = function(scope, columnDefs, config){
         var fakeI18n;
         i18nService.setCurrentLang('zh-cn');
@@ -51,14 +42,30 @@ function tableFactoryFunc($timeout, $q, $interval, i18nService, uiGridConstants,
             }, 1000, 1);
             return deferred.promise;
         }
-        // todo
+
+        // 设置预备的搜索条件
         scope.searchData = {};
         scope.isRefresh = false;
-        angular.extend(scope.searchKeys, {
-            operateFunction: function() {
-                getPage();
-            }
-        });
+        if (scope.searchKeys && !angular.equals({}, scope.searchKeys)) {
+            angular.extend(scope.searchKeys, {
+                operateFunction: function() {
+                    let sKeys = Object.keys(scope.searchKeys.fields);
+                    sKeys.forEach(function(item){
+                        scope.searchData[item] = scope.searchKeys.fields[item].value;
+                    });
+                    getPage();
+                }
+            });
+        } else {
+            scope.searchKeys = {};
+            angular.extend(scope.searchKeys, {
+                operateFunction: function() {
+                    getPage();
+                }
+            });
+        }
+
+
 
         function getPage() {
             let data = angular.copy(scope.searchData);
@@ -102,14 +109,13 @@ function tableFactoryFunc($timeout, $q, $interval, i18nService, uiGridConstants,
         if(config.allowMenuReset && config.menuReset){
             let localStorageMenus = utils.localStorage.get(config.menuReset);
             if(localStorageMenus){
-               let menus = localStorageMenus.split(',');
-               let colDefs = menus.map(function(item){
-                  let arr = columnDefs.filter(function(it){
-                     if(it.field == item) return it;
-                  })
-                  return arr[0]
-               })
-
+                let menus = localStorageMenus.split(',');
+                let colDefs = menus.map(function(item){
+                    let arr = columnDefs.filter(function(it){
+                        if(it.field == item) return it;
+                    })
+                    return arr[0]
+                });
                columnDefs = colDefs;
             }
         }
@@ -121,7 +127,7 @@ function tableFactoryFunc($timeout, $q, $interval, i18nService, uiGridConstants,
             enableFiltering: false, //启用行过滤条件
             enableSorting: true,
             allowCellFocus:true,
-            enableColumnMenus:config.enableColumnMenus?config.enableColumnMenus:false,
+            enableColumnMenus: config.enableColumnMenus?config.enableColumnMenus:false,
             enableGridMenu: config.enableGridMenu ? config.enableGridMenu : false, //是否启用显示右上角总控制菜单
             enableColumnResizing: true, //是否启用可控的列宽的伸缩
             exporterMenuCsv: false, //在右上角总控制菜单中显示导出Csv按钮
@@ -138,31 +144,27 @@ function tableFactoryFunc($timeout, $q, $interval, i18nService, uiGridConstants,
             modifierKeysToMultiSelectCells: true, //默认false,为true时只能 按ctrl或shift键进行多选, multiSelect 必须为true;
             columnDefs:  columnDefs,
             fastWatch:true,
-            enableHorizontalScrollbar:ifEnableHorizontalScrollbar,
-            enableVerticalScrollbar:uiGridConstants.scrollbars.ALWAYS, //永久启用垂直滚动条
+            enableHorizontalScrollbar: ifEnableHorizontalScrollbar,
+            enableVerticalScrollbar: uiGridConstants.scrollbars.ALWAYS, //永久启用垂直滚动条
             useExternalPagination: true,//自定义sort
             useExternalSorting: true,//自定义sort
-            showColumnFooter:false,
-            infiniteScrollDown:true,
-            minRowsToShow:100,
-            scrollDebounce:0,
-            wheelScrollThrottle:0,
+            showColumnFooter: false,
+            infiniteScrollDown: true,
+            minRowsToShow: 100,
+            scrollDebounce: 0,
+            wheelScrollThrottle: 0,
             plugins: [new ngGridFlexibleHeightPlugin()],
-            onRegisterApi:function(gridApi){
-                //console.log(gridApi);
-                //console.log(uiGridMoveColumnService);
-
+            onRegisterApi: function(gridApi){
                 //保存用户拖拽表头的新秩序
                 if(config.allowMenuReset && config.menuReset){
-                    gridApi.colMovable.on.columnPositionChanged(scope,function(colDef, originalPosition, newPosition){
-                        var arr  = gridApi.grid.moveColumns.orderCache;
-                        var indexsArr = arr.map(function(item){
-                          return item.field;
+                    gridApi.colMovable.on.columnPositionChanged(scope, function(colDef, originalPosition, newPosition) {
+                        var arr = gridApi.grid.moveColumns.orderCache;
+                        var indexsArr = arr.map(function(item) {
+                            return item.field;
                         });
                         utils.localStorage.set(config.menuReset,indexsArr);
                     });
                 }
-
 
                 tableConfigs.push(config);
                 //初始化表格的相关数据
@@ -174,10 +176,10 @@ function tableFactoryFunc($timeout, $q, $interval, i18nService, uiGridConstants,
                             scope.item = null;
                         }
 
-                        if(everyConfig.selectedItems){ //通过选中的行数来判断操作按钮的禁用与非禁用
-                            scope[everyConfig.selectedItems] = 0;
+                        if(everyConfig.selectedRowsNumber){ //通过选中的行数来判断操作按钮的禁用与非禁用
+                            scope[everyConfig.selectedRowsNumber] = 0;
                         }else{
-                            scope.selectedItems = 0;
+                            scope.selectedRowsNumber = 0;
                         }
 
                         if(everyConfig.selectedRows){
@@ -202,7 +204,8 @@ function tableFactoryFunc($timeout, $q, $interval, i18nService, uiGridConstants,
                 //重置表格的相关数据
                 scope.resetTableData = function(){
                     scope.initTableData();
-                    scope.gridApi.selection.clearSelectedRows();//清除选中的行
+                    //清除选中的行
+                    scope.gridApi.selection.clearSelectedRows();
                 }
 
                 //console.log(gridApi.selection);
@@ -241,7 +244,7 @@ function tableFactoryFunc($timeout, $q, $interval, i18nService, uiGridConstants,
                     }
                 });
 
-                if(config.selectedRows){
+                if (config.selectedRows) {
                     scope[config.selectedRows] = [];
                 }else{
                     scope.selectedRows = [];
@@ -254,10 +257,10 @@ function tableFactoryFunc($timeout, $q, $interval, i18nService, uiGridConstants,
                 }
 
                 //列的显示与隐藏回调
-                /*gridApi.core.on.columnVisibilityChanged(scope,function(){
+                gridApi.core.on.columnVisibilityChanged(scope,function(){
 
-                })*/
-               gridApi.cellNav.on.navigate(scope,function(newRowCol, oldRowCol){
+                });
+                gridApi.cellNav.on.navigate(scope,function(newRowCol, oldRowCol){
                     //console.log(newRowCol);
                     //console.log(oldRowCol);
                 });
@@ -268,99 +271,101 @@ function tableFactoryFunc($timeout, $q, $interval, i18nService, uiGridConstants,
 
                 //点击全选反选批量处理结果集
                 gridApi.selection.on.rowSelectionChangedBatch(scope, function(row){
-                    if(config.selectedItems){
-                        scope[config.selectedItems] = gridApi.selection.getSelectedRows().length; //获取选中行的总行数
-                    }else{
-                        scope.selectedItems = gridApi.selection.getSelectedRows().length; //获取选中行的总行数
+                    if (config.selectedRowsNumber) {
+                        //获取选中行的总行数
+                        scope[config.selectedRowsNumber] = gridApi.selection.getSelectedRows().length;
+                    } else {
+                        //获取选中行的总行数
+                        scope.selectedRowsNumber = gridApi.selection.getSelectedRows().length;
                     }
 
+                    if (config.selectedRows) {
+                        scope[config.selectedRows] = gridApi.selection.getSelectedRows();
+                    } else {
+                        scope.selectedRows = gridApi.selection.getSelectedRows();
+                    }
+                });
+
+                gridApi.selection.on.rowSelectionChanged(scope, function(row, event) {
+                    console.log(event.target);
+                    //console.log(scope.gridApi.selection.getSelectAllState());
+                    //console.log(gridApi.grid.api.cellNav.getCurrentSelection());
+                    // 选中与不选中的都能活到点击的行的索引
+                    let initIndex = gridApi.grid.renderContainers.body.visibleRowCache.indexOf(row);
+                    // 选择的行数组
                     if(config.selectedRows){
                         scope[config.selectedRows] = gridApi.selection.getSelectedRows();
                     }else{
                         scope.selectedRows = gridApi.selection.getSelectedRows();
                     }
-                });
-                gridApi.selection.on.rowSelectionChanged(scope, function(row) {
-                    //scope.gridApi.selection.clearSelectedRows();
-                    //console.log(scope.gridApi.selection.getSelectAllState());
-                    //console.log(scope.gridApi.selection.getSelectedRows());
-                    //console.log(gridApi.grid.api.cellNav.getCurrentSelection());
 
                     if(row.isSelected){
+                        // selectedRowsIndexs 选择的行的索引数组
                         if(config.selectedRowsIndexs){
-                            scope[config.selectedRowsIndexs].push(gridApi.grid.renderContainers.body.visibleRowCache.indexOf(row));
-                            scope[config.selectedRowsIndexs] = array_unique(scope[config.selectedRowsIndexs]);
+                            scope[config.selectedRowsIndexs].push(initIndex);
+                            scope[config.selectedRowsIndexs] = utils.array_unique(scope[config.selectedRowsIndexs], true);
                         }else{
-                            scope.selectedRowsIndexs.push(gridApi.grid.renderContainers.body.visibleRowCache.indexOf(row));
-                            scope.selectedRowsIndexs = array_unique(scope.selectedRowsIndexs);
+                            scope.selectedRowsIndexs.push(initIndex);
+                            scope.selectedRowsIndexs = utils.array_unique(scope.selectedRowsIndexs, true);
                         }
+                        // row.entity 对象中的id一般是数据表中定义的id
                         if(config.selectedId){
                             scope[config.selectedId] = row.entity.id;
                         }else{
                             scope.selectedId = row.entity.id;
                         }
                     }else{
-                        let initIndex = gridApi.grid.renderContainers.body.visibleRowCache.indexOf(row);
-                        if(config.selectedRowsIndexs){
-                            angular.forEach(scope[config.selectedRowsIndexs], function(item,index){
-                                if(item==initIndex){
-                                    scope[config.selectedRowsIndexs].splice(index,1);
+                        // 反选需要手动删除选择的行的索引数组的具体索引
+                        if (config.selectedRowsIndexs) {
+                            angular.forEach(scope[config.selectedRowsIndexs], function(item, index){
+                                if (item == initIndex) {
+                                    scope[config.selectedRowsIndexs].splice(index, 1);
                                 }
                             });
-                        }else{
-                             angular.forEach(scope.selectedRowsIndexs, function(item,index){
-                                if(item==initIndex){
-                                    scope.selectedRowsIndexs.splice(index,1);
+                        } else {
+                             angular.forEach(scope.selectedRowsIndexs, function(item, index){
+                                if (item == initIndex) {
+                                    scope.selectedRowsIndexs.splice(index, 1);
                                 }
                             });
                         }
-                        if(config.selectedRows){
-                            if(scope[config.selectedRows].length==1){
-                                scope[config.selectedId] = scope[config.selectedRows][0];
+                        if (config.selectedRows) {
+                            if(scope[config.selectedRows].length == 1){
+                                scope[config.selectedId] = scope[config.selectedRows][0].id;
                             }
-                        }else{
-                            if(scope.selectedRows.length==1){
-                                scope.selectedId = scope.selectedRows[0];
+                        } else {
+                            if (scope.selectedRows.length == 1) {
+                                scope.selectedId = scope.selectedRows[0].id;
                             }
                         }
                     }
-
-                    if(config.item){ //设置在页面中多个表格点击列后每项的代表字段，如果存在则设置 ，如果不存在则使用默认的item字段，说明页面中只有一个表格
-                         scope[config.item] = row.entity;
-                    }else{
+                    // 设置在页面中多个表格点击列后每项的代表字段，如果存在则设置 ，如果不存在则使用默认的item字段，说明页面中只有一个表格
+                    if (config.item) {
+                        scope[config.item] = row.entity;
+                    } else {
                         scope.item = row.entity;
                     }
-                    // console.log('gridApi.selection',gridApi.selection);
-                    // console.log(gridApi.selection.getSelectedCount());
-                    if(config.selectedItems){
-                        scope[config.selectedItems] = gridApi.selection.getSelectedRows().length; //获取选中行的总行数
-                    }else{
-                        scope.selectedItems = gridApi.selection.getSelectedRows().length; //获取选中行的总行数
+                    console.log('gridApi.selection', gridApi.selection);
+
+                    if (config.selectedRowsNumber) {
+                        //获取选中行的总行数
+                        scope[config.selectedRowsNumber] = gridApi.selection.getSelectedCount();
+                    } else {
+                        //获取选中行的总行数
+                        scope.selectedRowsNumber = gridApi.selection.getSelectedCount();
                     }
 
-                    if(config.selectedRows){
-                        scope[config.selectedRows] = gridApi.selection.getSelectedRows();
-                    }else{
-                        scope.selectedRows = gridApi.selection.getSelectedRows();
-                    }
-                    //console.log(scope.selectedRowsIndexs); //查看选中行的索引
-                    //console.log(scope.selectedRows); //查看选中行的列表
-                    //console.log(scope.selectedId); //打印选中行的ID
-                    //console.log(scope.selectedItems); //打印选中行的数量
                 });
-
-                // gridApi.selection.on.SelectionChanged(scope, function(row) {
-                // })
 
 
             }
         };
 
+        // 分页的设置
         if(config.pagingOptions){
             factory.gridOptions.useExternalPagination = true;
             factory.gridOptions.enablePaging = true;//启用分页
             factory.gridOptions.paginationPageSizes =  [20, 30, 50, 100]; //分页设置显示条数数组
-
             factory.gridOptions.paginationPageSize =20;//初始化显示每个分页中显示的item条数
             factory.gridOptions.enablePaginationControls = true; //启用分页设置
             factory.gridOptions.paginationCurrentPage = 1;
@@ -369,13 +374,13 @@ function tableFactoryFunc($timeout, $q, $interval, i18nService, uiGridConstants,
             factory.gridOptions.enablePaginationControls = false;
         }
 
-
         /*
         * 初始化按钮的的禁用状态并监听按钮的disable的状态值
+        * 页面的表格的操作按钮跟表格耦合在一起了
         */
-        scope.$watch("selectedItems",function(newVal,oldVal){
-            let selectedNums = scope.selectedItems;
-            angular.forEach(scope.operateButton,function(item,index){
+        scope.$watch("selectedRowsNumber", function(newVal, oldVal){
+            let selectedNums = scope.selectedRowsNumber;
+            angular.forEach(scope.operateButton, function(item,index){
                 /*
                 * 如果item.isLinstener为true，则对其开启watch模式，通过选中行的个数来判断其是否禁用
                 */

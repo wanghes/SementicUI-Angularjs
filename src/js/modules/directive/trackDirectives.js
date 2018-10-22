@@ -46,26 +46,12 @@ uiGridLoading(trackDirectiveModule);
 uiCity(trackDirectiveModule);
 uiConfirm(trackDirectiveModule);
 uiTopSearchedItems(trackDirectiveModule);
-
-trackDirectiveModule.directive('uiSearchComplete', (services, $timeout) => {
-    return uiSearchComplete(services, $timeout);
-});
-trackDirectiveModule.directive('inputValidate', (pNotify) => {
-    return uiInputValidate(pNotify);
-});
-trackDirectiveModule.directive('uiDateRange', ($timeout) => {
-    return uiDateRange($timeout);
-});
-
-trackDirectiveModule.directive('uiModal', ($timeout,pNotify,services,$sce) => {
-    return uiModal($timeout,pNotify,services,$sce);
-});
-
-trackDirectiveModule.directive('uiSliderModal', ($timeout,pNotify,services,$sce) => {
-    return uiSliderModal($timeout,pNotify,services,$sce);
-});
-
-trackDirectiveModule.directive('popupContent',uiPopupContent);
+uiSearchComplete(trackDirectiveModule);
+uiInputValidate(trackDirectiveModule);
+uiDateRange(trackDirectiveModule);
+uiModal(trackDirectiveModule);
+uiSliderModal(trackDirectiveModule);
+uiPopupContent(trackDirectiveModule);
 
 
 export default trackDirectiveModule;

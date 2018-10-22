@@ -24,34 +24,77 @@ export default function() {
         $scope.searchKeys = {
             fields: {
                 timeArea: {
-                    name: '时间范围',
+                    label: '时间范围',
                     defaultText: "请选择时间范围",
                     text: "",
                     value: "",
                     ranges:7,
                     id: "TimeArea",
-                    type: "timePicker",
+                    type: "datePicker",
                 },
                 test01: {
-                    name: 'test01',
-                    defaultText: "请选择test01",
+                    label: '测试信息',
+                    defaultText: "请选择测试信息",
                     text: '全部',
                     value: '',
                     type: "dropdown",
+                    data:[{
+                        name:'测试信息1',
+                        value:1
+                    },{
+                        name:'测试信息2',
+                        value:2
+                    },{
+                        name:'测试信息3',
+                        value:3
+                    },{
+                        name:'测试信息4',
+                        value:4
+                    }]
                 },
-                test02: {
-                    name: 'test02',
-                    defaultText: "请填写test02",
+                province: {
+                    label: '所在省份',
+                    type: "area",
+                    value: '',
+                    level:3
+                },
+                company: {
+                    label: '所属公司',
+                    type: "dropdown",
+                    defaultText: "请选择所属公司",
                     text: '',
                     value: '',
-                    type: "input",
+                    data: [
+                        { name: "百度", value: 1 },
+                        { name: "新浪", value: 2 },
+                        { name: "搜狐", value: 3 }
+                    ]
                 },
-                test01: {
-                    name: 'test01',
+                hobies:  {
+                    label: "兴趣爱好",
+                    type: "dropdowns",
+                    defaultText: "请选择兴趣爱好",
+                    text: '',
+                    value: '',
+                    data: [
+                        { name: "篮球", value: 1 },
+                        { name: "Dota", value: 2 },
+                        { name: "游泳", value: 3 },
+                        { name: "爬上", value: 4 },
+                        { name: "划船", value: 5 }
+                    ]
+                },
+                test03: {
+                    label: 'test03',
+                    type: "input",
                     defaultText: "请填写test01",
-                    text: '',
-                    value: '',
+                    value: ''
+                },
+                test04: {
+                    label: 'test04',
                     type: "input",
+                    defaultText: "请填写test04",
+                    value: ''
                 }
             }
         };
@@ -61,13 +104,33 @@ export default function() {
             displayName: "标题",
             enableSorting: true,
             allowCellFocus: false,
-            width: 500
+            width: 200,
+            cellTemplate:'<ui-popup-content position="top left" model="row.entity" field="title">{{row.entity.title}}</ui-popup-content>'
         }, {
             field: "author_name",
             displayName: "作者",
+            cellClass:"center",
             enableSorting: true,
             allowCellFocus: false,
-            width: 150
+            width: 150,
+            menuItems: [
+                {
+                    title: 'Outer Scope Alert',
+                    icon: 'ui-grid-icon-info-circled',
+                    action: function($event) {
+                        console.log($event);
+                    },
+                    shown: function() { return true; },
+                    active: function() { return false; },
+                    context: $scope
+                },
+                {
+                    title: 'Grid ID',
+                    action: function() {
+                        alert('Grid ID: ' + this.grid.id);
+                    }
+                }
+            ]
         }, {
             field: "sex",
             displayName: "性别",
@@ -78,6 +141,7 @@ export default function() {
             field: "area",
             displayName: "所在地址",
             enableSorting: true,
+            cellTooltip: true,
             allowCellFocus: false,
             width: 250
         },{
@@ -144,6 +208,7 @@ export default function() {
             id: "templateBtn",
             isLinstener: true,
             isMulti: false,
+            disabled: false,
             action: {
                 open: "template",
                 operateFunctions: {
@@ -151,25 +216,24 @@ export default function() {
                         $scope.templateModal.show();
                     }
                 }
-            },
-            disabled: false
+            }
         }, {
             name: "modal模式按钮",
             className: "teal",
             id: "modalBtn",
             icon: "recycle",
-            isLinstener: true,
-            isMulti: true,
+            isLinstener: false,
+            isMulti: false,
+            disabled: false,
             action: {
                 open: "modal",
-                id: "#openModal",
+                id: "openModal",
                 operateFunctions: {
                     open: function() {
                         console.log('opened modal');
                     }
                 }
-            },
-            disabled: false
+            }
         }, {
             name: "sidebar模式按钮",
             className: "red",
@@ -177,17 +241,17 @@ export default function() {
             icon: "minus",
             isLinstener: false,
             isMulti: false,
+            disabled: false,
             action: {
                 open: "sidebar",
-                id: "#sidebarBox",
+                id: "sidebarBox",
                 transition: 'scale down',
                 operateFunctions: {
                     open: function() {
                         console.log('opened sidebar');
                     }
                 }
-            },
-            disabled: false
+            }
         }, {
             name: "非打开模式按钮",
             className: "orange",
@@ -195,14 +259,14 @@ export default function() {
             icon: "download",
             isLinstener: false,
             isMulti: false,
+            disabled: false,
             action: {
                 operateFunctions: {
                     open: function() {
                         window.parent.open('http://www.baidu.com');
                     }
                 }
-            },
-            disabled: false
+            }
         }];
 
         //设置所有的modals的配置
@@ -210,7 +274,7 @@ export default function() {
             title: "modal模式",
             id: "openModal",
             fieldsColumn: 2,
-            modalSize: "big",
+            modalSize: "small",
             modalButtons: [
                 {
                     name: "确定",
@@ -239,67 +303,78 @@ export default function() {
                     });
 
                     return new Promise((resolve, reject) => {
-                        console.log(result);
                         resolve(false);
                     })
                 }
             },
-            fields: [{
-                type: "input",
-                name: "姓名",
-                field_name: "operator",
-                defaultText: "请填写姓名",
-                text: '',
-                value: '',
-            }, {
-                type: "input",
-                name: "电话",
-                field_name: "phone",
-                defaultText: "请填写电话",
-                text: '',
-                value: '',
-            }, {
-                type: "dropdownOne",
-                name: "所属公司",
-                field_name: "company",
-                defaultText: "请选择所属公司",
-                text: '',
-                value: '',
-                data: [
-                    { name: "百度", value: 1 },
-                    { name: "新浪", value: 2 },
-                    { name: "搜狐", value: 3 }
-                ]
-            }, {
-                type: "dropdownTwo",
-                name: "兴趣爱好",
-                field_name: "hobies",
-                defaultText: "请选择兴趣爱好",
-                text: '',
-                value: '',
-                data: [
-                    { name: "篮球", value: 1 },
-                    { name: "Dota", value: 2 },
-                    { name: "游泳", value: 3 },
-                    { name: "爬上", value: 4 },
-                    { name: "划船", value: 5 }
-                ]
-            }, {
-                type: "textarea",
-                name: "备注",
-                field_name: "remark",
-                defaultText: "请填写备注说明",
-                value: '',
-            }, {
-                type: "area",
-                name: "所在省市",
-                field_name: "province",
-                defaultText: "请填写所在省市",
-                id: "addProvince",
-                level: 3,
-                text: '',
-                value: ''
-            }]
+            fields: {
+                operator: {
+                    label: '姓名',
+                    type: "input",
+                    defaultText: "请填写姓名",
+                    text: '',
+                    value: ''
+                },
+                phone: {
+                    label: '电话',
+                    type: "input",
+                    defaultText: "请填写电话",
+                    text: '',
+                    value: ''
+                },
+                company: {
+                    label: '所属公司',
+                    type: "dropdown",
+                    defaultText: "请选择所属公司",
+                    text: '',
+                    value: '',
+                    data: [
+                        { name: "百度", value: 1 },
+                        { name: "新浪", value: 2 },
+                        { name: "搜狐", value: 3 }
+                    ]
+                },
+                hobies: {
+                    type: "dropdowns",
+                    label: "兴趣爱好",
+                    defaultText: "请选择兴趣爱好",
+                    text: '',
+                    value: '',
+                    data: [
+                        { name: "篮球", value: 1 },
+                        { name: "Dota", value: 2 },
+                        { name: "游泳", value: 3 },
+                        { name: "爬上", value: 4 },
+                        { name: "划船", value: 5 }
+                    ]
+                },
+                remark: {
+                    label: "备注",
+                    type: "textarea",
+                    defaultText: "请填写备注说明",
+                    value: ''
+                },
+                province: {
+                    label: "所在省市",
+                    type: "area",
+                    defaultText: "请填写所在省市",
+                    id: "addProvince",
+                    level: 3,
+                    text: '',
+                    value: ''
+                },
+                head: {
+                    label: "上传头像",
+                    type: "file",
+                    defaultText: "请上传头像",
+                    apiService(file) {
+                        var formData = new FormData();
+                        formData.append("path", file);
+                        console.log(file);
+                    },
+                    value: '',
+                }
+            }
         }];
 
         //设置所有的sidebar的配置
@@ -308,11 +383,21 @@ export default function() {
             icon: "alarm",
             id: "sidebarBox",
             sidebarStyle:"width:70%;",
-            fieldsColumn: 3,
-            otherShow: false,
+            fieldsColumn: 1,
+            otherShow: true,
             sliderButtons: [ //可以为false或者为[]
-                { name: "确认", className: "teal", id: "testPushBtn", func: 'saveForm' },
-                { name: "取消", className: "black deny", id: "cancelTestPushBtn", func: 'close' }
+                {
+                    name: "确认",
+                    className: "teal",
+                    id: "testPushBtn",
+                    func: 'saveForm'
+                },
+                {
+                    name: "取消",
+                    className: "black deny",
+                    id: "cancelTestPushBtn",
+                    func: 'close'
+                }
             ],
             operateFunctions: {
                 saveForm: function(result, callback) {

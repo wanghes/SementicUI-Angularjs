@@ -16,7 +16,7 @@ export default function(module) {
             </div>`,
             replace: true,
             controller:function($scope){
-                //console.log($scope)
+                console.log($scope)
             },
             link: function(scope, elem, attrs, topSearchCtrl) {
                 let labellist = []; //搜索项标签字典
@@ -38,11 +38,21 @@ export default function(module) {
 
                 $timeout(() =>{
                     //创建显示搜索项的labels
+                    let count = 0;
+                    if (!scope.searchKeys || angular.equals({}, scope.searchKeys)) {
+                        $('#searchList').html("<span style='color:#999'>目前还没有相关的搜索信息!</span>")
+                            .parents('.common_label')
+                            .css("user-select","none");
+                            scope.$parent.searchKeys.operateFunction();
+                            return;
+                    }
+
                     scope.$watch('searchKeys', function(newVal, oldVal) {
                         if(oldVal == newVal) {
                             // scope.$parent.searchKeys.operateFunction();
                             return;
                         }
+                        count++;
                         scope.labellist = [];
                         let fields = scope.searchKeys.fields;
                         let searchDataStatus = false;
@@ -54,7 +64,7 @@ export default function(module) {
                                 }
                             }
                         }
-                      //  console.log(fields);
+
                         if(!searchDataStatus){
                             $('#searchList').html("<span style='color:#999'>目前还没有相关的搜索信息!</span>")
                             .parents('.common_label')
@@ -64,17 +74,15 @@ export default function(module) {
 
                         let addble = false, html, keyWord, valInfo;
                         for (keyWord in fields) {
-                            addble=false
-                            //text用来显示labels
-                            if(fields[keyWord].text) {
-                                valInfo = fields[keyWord].text;
+                            addble=false;
+                            if (fields[keyWord].type == "input" && fields[keyWord].value) {
+                                valInfo = fields[keyWord].value;
                                 addble=true;
-                            }
-                            if(fields[keyWord].type=="area" && fields[keyWord].value ){ //若果是地区选择器的话是city.name
+                            } else if(fields[keyWord].type=="area" && fields[keyWord].value) { //如果是地区选择器的话是city.name
                                 addble=true;
-                                if(fields[keyWord].level==1){
+                                if(fields[keyWord].level == 1){
                                     let arr = angular.fromJson(fields[keyWord].value);
-                                    if(arr.length>0){
+                                    if(arr.length > 0){
                                         valInfo = angular.fromJson(fields[keyWord].value)[0].name;
                                     }
                                 }else{
@@ -85,11 +93,22 @@ export default function(module) {
                                     });
                                     valInfo =  valInfo.substring(0, valInfo.length - 1);
                                 }
+                            } else if (fields[keyWord].type == "datePicker" && fields[keyWord].value) {
+                                valInfo = fields[keyWord].value.join('至');
+                                addble=true;
+                            } else if (fields[keyWord].type == "dropdown" && fields[keyWord].text) {
+                                valInfo = fields[keyWord].text;
+                                addble=true;
+                            } else if (fields[keyWord].type == "dropdowns" && fields[keyWord].text) {
+                                valInfo = fields[keyWord].text;
+                                addble=true;
                             }
+
+
                             if(addble){
                                 scope.outputLabel({
                                     keyWord:keyWord,
-                                    name:fields[keyWord].name,
+                                    name:fields[keyWord].label,
                                     valInfo:valInfo,
                                     type:fields[keyWord].type
                                 });
@@ -98,8 +117,11 @@ export default function(module) {
 
                         html = scope.labellist.join('');
                         $('#searchList').html(html);
+                        if (count == 1) {
+                            scope.$parent.searchKeys.operateFunction();
+                        }
                         scope.resetScrollBar();
-                        scope.$parent.searchKeys.operateFunction();
+
                     }, true);
                 })
 
@@ -129,8 +151,8 @@ export default function(module) {
 
                 //删除某一个查询的标签项，就会重新唤起一次查询
                 $(elem).on('click', '.remove_label', function() {
-                    let name = $(this).data('name') ,
-                        type = $(this).data('type');
+                    let name = $(this).data('name');
+                    let type = $(this).data('type');
 
                     scope.searchKeys.fields[name].value = '';
                     scope.searchKeys.fields[name].text = '';

@@ -10,15 +10,15 @@
     <!-- 页面loading -->
     <ui-page-loading load-status="pageLoading"></ui-page-loading>
     <!-- 设置右侧滑动的slider -->
-    <ui-slider-modal ng-repeat="slider in sliderModals" slider-info="slider"></ui-slider-modal>
+    <ui-slider-modal ng-repeat="slider in sliderModals" slider-info="slider">
+        <span>这是一个测试信息</span>
+    </ui-slider-modal>
     <!-- 设置modal弹框内容 -->
     <ui-modal ng-repeat="modal in modals" modal-info="modal"></ui-modal>
     <!-- 主容器设置 -->
     <main-box class="pusher main_box">
         <!-- 顶部下拉搜索 -->
         <ui-top-search search-modal-id="topModal" search-column-num="4" search-keys="searchKeys">
-            <ui-top-search-form></ui-top-search-form>
-            <ui-searched-items></ui-searched-items>
         </ui-top-search>
         <!-- 按钮组 -->
         <ui-button-group buttons="operateButton"></ui-button-group>

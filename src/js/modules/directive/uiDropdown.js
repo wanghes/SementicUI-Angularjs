@@ -1,12 +1,12 @@
 export default function(module) {
     module.directive('uiDropdown', directive);
-    directive.$inject = ['$timeout'];
-    function directive($timeout) {
+    directive.$inject = ['$timeout','utils'];
+    function directive($timeout, utils) {
         return {
             restrict: 'E',
             priority: 9999,
             template:`
-            <div class="ui search selection dropdown {{ model.multi ? 'multiple': '' }}" id="searchItem_{{ model.ID }}">
+            <div class="ui search selection dropdown {{ multi ? 'multiple': '' }}" id="searchItem_{{ model.ID }}">
                 <input name="modelValue" type="hidden" ng-value="model.value" />
                 <i class="dropdown icon"></i>
                 <div class="default text" ng-bind="model.text || model.defaultText"></div>
@@ -23,12 +23,12 @@ export default function(module) {
             },
             link: function(scope, elem, attrs) {
                 var defaultVal = scope.model.defaultText;
-
+                scope.multi = scope.model.type == 'dropdown' ? false : true;
                 $timeout(function(){
                     let dropdownConfig = {
                         fields:{
                             name : scope.model.showName || "name",   // displayed dropdown text
-                            value : scope.model.selectValue || "value"
+                            value : scope.model.selectedValue || "value"
                         },
                         direction:'downward',
                         fullTextSearch:true,
@@ -36,7 +36,7 @@ export default function(module) {
                         forceSelection: false,//禁止默认选中最后一个
                         onChange: function(value, text, $selectedItem) {
                             scope.model.value = value;
-                            if(!scope.model.multi){
+                            if(!scope.multi){
                                 scope.model.text = text;
                             }
                         },
@@ -53,7 +53,7 @@ export default function(module) {
                             }
 
                             let newText = scope.model.text.split(',');
-                            newText = scope.array_unique(newText);
+                            newText = utils.array_unique(newText);
                             scope.model.text = newText.join(',');
                         },
                         //只能配合多选时候使用onRemove
@@ -70,13 +70,16 @@ export default function(module) {
                         },
                         onLabelSelect:function($selectedLabels){
                             //console.log('selectedLabels:'+$selectedLabels)
+                        },
+                        show: function() {
+
                         }
                     };
 
                     if(scope.model.asyncFetchDataFunc && angular.isFunction(scope.model.asyncFetchDataFunc)){
                         dropdownConfig = angular.extend(dropdownConfig, {
                             apiSettings:{
-                                responseAsync:function(setting,callback){
+                                responseAsync:function(setting, callback){
                                     scope.model.asyncFetchDataFunc(function(data) {
                                         //再次focus后要清除menu中项，重新生成完整的列表
                                         $(elem).find(`#searchItem_${scope.model.ID}.ui.dropdown .menu`).html('');
@@ -95,7 +98,7 @@ export default function(module) {
                     $(elem).find(`#searchItem_${scope.model.ID}.ui.dropdown`).dropdown(dropdownConfig);
                 })
 
-                if(scope.model.data && scope.model.data.length>0){
+                if(scope.model.data && scope.model.data.length > 0) {
                     scope.dropdownList = scope.model.data;
                 }else if(scope.model.func){
                     scope.$watch('model.data',function(toVal,fromVal){
@@ -109,16 +112,6 @@ export default function(module) {
                     $(elem).find('.ui.dropdown').dropdown('clear');
                     $(elem).find('.ui.dropdown .default_text').addClass('default').text(defaultVal);
                 });
-
-                scope.array_unique = function(ar){
-                    var m,n=[],o= {};
-                    for (var i=0;(m= ar[i])!==undefined;i++){
-                        if (!o[m]){
-                            n.push(m);o[m]=true;
-                        }
-                    }
-                   return n;
-                }
 
                 //寻找请求中的数据是否已经被删除，删除的话将自动删除选中的标签
                 scope.deleteNonExistValues = function(data,value){

@@ -25,7 +25,7 @@ export default function(module) {
                                 return;
                             }
 
-                           $(action.id).sidebar({
+                           $(`#${action.id}`).sidebar({
                                 transition:action.transition ? action.transition : 'push'
                            }).sidebar('show');
                         }else if(action.open=='modal'){
@@ -33,7 +33,7 @@ export default function(module) {
                                 throw new Error('没有定义相应的打开modal的ID!');
                                 return;
                             }
-                            $(action.id).modal({
+                            $(`#${action.id}`).modal({
                                 autofocus:false,
                                 context:"body",
                                 closable:false,

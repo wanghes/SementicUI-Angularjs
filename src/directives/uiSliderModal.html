@@ -1,0 +1,98 @@
+<div class="ui right sidebar custom_sidebar" id="{{ id }}" style="{{sidebarStyle}}">
+    <div class="custom_sidebar_inner">
+        <h3 class="ui dividing header">
+            <i class="{{icon}} icon"></i>{{title}}
+        </h3>
+        <div class="insert_wrap">
+            <div class="insert_wrap_inner">
+                <form class="insert_slider ui form clearfix" id="{{ formID }}" ng-show="!!fields" style="width:{{formWidth}}">
+                    <div ng-repeat="(name, field) in fields" class="form_item" style="{{ itemStyle(field) }}">
+                        <div ng-if="field.type == 'input'" class="sixteen wide field slider_io">
+                            <label>{{ field.label }}</label>
+                            <input
+                            type="text"
+                            name="{{ name }}"
+                            placeholder="{{ field.defaultText }}"
+                            value="{{ field.value }}"
+                            ng-model="field.value">
+                        </div>
+                        <div ng-if="field.type == 'dropdown'" class="sixteen wide field slider_io">
+                            <label>{{ field.label }}</label>
+                            <div class="ui search selection dropdown" data-func="{{ field.defaultFuncName }}">
+                                <input
+                                type="hidden"
+                                name="{{ name }}"
+                                value="{{ field.value }}" />
+                                <i class="dropdown icon"></i>
+                                <div ng-class="{true: 'text', false: 'text default'}[field.text.length > 0]">
+                                    {{ field.text || field.defaultText }}
+                                </div>
+                                <div class="menu">
+                                    <div class="item"
+                                    ng-repeat="data in field.data"
+                                    data-value="{{ data.value }}">{{ data.name }}</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div ng-if="field.type == 'dropdowns'" class="sixteen wide field slider_io">
+                            <label>{{ field.label }}</label>
+                            <div class="ui search selection dropdown multiple" data-func="{{ field.defaultFuncName }}">
+                                <input
+                                type="hidden"
+                                name="{{ name }}"
+                                value="{{ field.value }}" />
+                                <i class="dropdown icon"></i>
+                                <div class="text default">{{ field.text || field.defaultText }}</div>
+                                <div class="menu">
+                                    <div class="item"
+                                    ng-repeat="data in field.data"
+                                    data-value="{{data.value}}">{{data.name}}</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div ng-if="field.type == 'tree'" class="sixteen wide field slider_io">
+                            <ui-tree-view item="field" name="{{ name }}"></ui-tree-view>
+                        </div>
+                        <div ng-if="field.type == 'file'" class="sixteen wide field slider_io">
+                            <label>{{ field.label }}</label>
+                            <ui-file-input
+                            api-service="{{ field.apiService }}"
+                            name="{{ name }}"
+                            value="{{ field.value }}"
+                            placeholder="{{ field.defaultText }}"
+                            ng-upload-change="fileChanged($event, name)">
+                            </ui-file-input>
+                        </div>
+                        <div ng-if="field.type == 'textarea'" class="sixteen wide field slider_io">
+                            <label>{{ field.label }}</label>
+                            <textarea
+                            rows="3"
+                            name="{{ name }}"
+                            ng-model="field.value"
+                            placeholder="{{ field.defaultText }}">
+                            {{ field.value }}
+                            </textarea>
+                        </div>
+                         <div ng-if="field.type=='area'" class="sixteen wide field slider_io">
+                            <label>{{ field.label }}</label>
+                            <input type="hidden"
+                            name="{{ name }}"
+                            value="{{ field.value }}" />
+                            <ui-city selected="field.value" level="{{ field.level }}"></ui-city>
+                        </div>
+                    </div>
+                    <div class="insert_slider_buttons">
+                        <button
+                        id="{{ sliderButton.id }}"
+                        ng-repeat="sliderButton in sliderButtons"
+                        class="ui button {{ sliderButton.className }}"
+                        ng-click="emitClick(sliderButton.func)">
+                        {{ sliderButton.name }}
+                        </button>
+                    </div>
+                </form>
+                <div ng-show="otherShow" class="other_html_wrap" ng-transclude></div>
+            </div>
+        </div>
+    </div>
+</div>

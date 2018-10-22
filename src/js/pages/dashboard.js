@@ -38,6 +38,5 @@ export default function dashboard() {
         $timeout(function(){
             $scope.loginMessage = '<br><b>今天我们去哪里？</b>';
         }, 1000);
-
     }
 }

@@ -20,7 +20,7 @@ serviceModule.config(['$httpProvider', '$qProvider', function($httpProvider, $qP
             $('#loadingBox', parent.document).hide();
         }
     }, 1000);
-});;
+});
 
 
 /***************
@@ -155,7 +155,7 @@ function servicesFunc($resource, utils, APPID, BASE_URL, HOST, oauth) {
             post: {...middleParams, method:'post' }
         }),
         posts:$resource(`${BASE_URL}/api/posts`,{}, {
-            query: middleParams
+            query: {...middleParams, method:'post'}
         }),
         users:$resource(`${BASE_URL}/api/user/:id`, {}, {
             delete: angular.extend(angular.copy(middleParams), {
