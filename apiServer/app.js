@@ -1,6 +1,6 @@
 const Koa = require("koa");
 const route = require('koa-route');
-const cors = require('koa-cors');
+const cors = require('koa-cors2');
 const moment = require('moment');
 const compress = require('koa-compress');
 const koaBody = require('koa-body');
@@ -14,4 +14,4 @@ app.use(route.get('/api/posts', router.fetchPosts));
 
 app.use(compress()); //对资源文件进行压缩
 
-app.listen(3000, "0.0.0.0");
+app.listen(9875, "0.0.0.0");
